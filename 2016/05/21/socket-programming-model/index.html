@@ -1,0 +1,583 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="socket-programming-model," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;#x963B;&amp;#x585E;I/O
+&amp;#x4E3B;&amp;#x7EBF;&amp;#x7A0B;&amp;#x963B;&amp;#x585E;&amp;#x5728;accept&amp;#x65B9;&amp;#x6CD5;&amp;#xFF0C;&amp;#x5F53;&amp;#x6709;&amp;#x8FDE;&amp;#x63A5;&amp;#x5230;&amp;#x8FBE;&amp;#x65F6;&amp;#xFF0C;&amp;#x542F;&amp;#x52A8;&amp;#x65B0;&amp;#x7684;&amp;#x7EB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="socket-programming-model">
+<meta property="og:url" content="http://yoursite.com/2016/05/21/socket-programming-model/index.html">
+<meta property="og:site_name" content="wfazong">
+<meta property="og:description" content="&amp;#x963B;&amp;#x585E;I/O
+&amp;#x4E3B;&amp;#x7EBF;&amp;#x7A0B;&amp;#x963B;&amp;#x585E;&amp;#x5728;accept&amp;#x65B9;&amp;#x6CD5;&amp;#xFF0C;&amp;#x5F53;&amp;#x6709;&amp;#x8FDE;&amp;#x63A5;&amp;#x5230;&amp;#x8FBE;&amp;#x65F6;&amp;#xFF0C;&amp;#x542F;&amp;#x52A8;&amp;#x65B0;&amp;#x7684;&amp;#x7EB">
+<meta property="og:image" content="http://yoursite.com/2016/05/21/socket-programming-model/socket1.jpg">
+<meta property="og:image" content="http://yoursite.com/2016/05/21/socket-programming-model/socket2.jpg">
+<meta property="og:image" content="http://yoursite.com/2016/05/21/socket-programming-model/socket3.jpg">
+<meta property="og:image" content="http://yoursite.com/2016/05/21/socket-programming-model/socket4.jpg">
+<meta property="og:updated_time" content="2016-11-22T08:10:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="socket-programming-model">
+<meta name="twitter:description" content="&amp;#x963B;&amp;#x585E;I/O
+&amp;#x4E3B;&amp;#x7EBF;&amp;#x7A0B;&amp;#x963B;&amp;#x585E;&amp;#x5728;accept&amp;#x65B9;&amp;#x6CD5;&amp;#xFF0C;&amp;#x5F53;&amp;#x6709;&amp;#x8FDE;&amp;#x63A5;&amp;#x5230;&amp;#x8FBE;&amp;#x65F6;&amp;#xFF0C;&amp;#x542F;&amp;#x52A8;&amp;#x65B0;&amp;#x7684;&amp;#x7EB">
+<meta name="twitter:image" content="http://yoursite.com/2016/05/21/socket-programming-model/socket1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/05/21/socket-programming-model/"/>
+
+  <title> socket-programming-model | wfazong </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">wfazong</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                socket-programming-model
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-21T10:45:42+08:00" content="2016-05-21">
+              2016-05-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="&#x963B;&#x585E;I-O"><a href="#&#x963B;&#x585E;I-O" class="headerlink" title="&#x963B;&#x585E;I/O"></a>&#x963B;&#x585E;I/O</h2><p><img src="/2016/05/21/socket-programming-model/socket1.jpg" alt="logo"></p>
+<p>&#x4E3B;&#x7EBF;&#x7A0B;&#x963B;&#x585E;&#x5728;accept&#x65B9;&#x6CD5;&#xFF0C;&#x5F53;&#x6709;&#x8FDE;&#x63A5;&#x5230;&#x8FBE;&#x65F6;&#xFF0C;&#x542F;&#x52A8;&#x65B0;&#x7684;&#x7EBF;&#x7A0B;&#xFF0C;&#x5E76;&#x5C06;socket&#x4F5C;&#x4E3A;&#x53C2;&#x6570;&#x4F20;&#x9012;&#x7ED9;&#x7EBF;&#x7A0B;&#xFF0C;&#x6765;&#x5B8C;&#x6210;read&#x3001;decode&#x3001;compute&#x3001;encode&#x3001;send&#x64CD;&#x4F5C;&#x3002;<br>&#x7F3A;&#x70B9;&#xFF1A;&#x8D1F;&#x8F7D;&#x589E;&#x52A0;&#x65F6;&#xFF0C;&#x6027;&#x80FD;&#x4E0B;&#x964D;&#x5F88;&#x5FEB;&#xFF0C;&#x521B;&#x5EFA;&#x9500;&#x6BC1;&#x7EBF;&#x7A0B;&#xFF0C;&#x4EE5;&#x53CA;&#x8FC7;&#x591A;&#x7EBF;&#x7A0B;&#x9020;&#x6210;cpu&#x7684;&#x9891;&#x7E41;&#x5207;&#x6362;&#x3002;</p>
+<h2 id="&#x975E;&#x963B;&#x585E;I-O"><a href="#&#x975E;&#x963B;&#x585E;I-O" class="headerlink" title="&#x975E;&#x963B;&#x585E;I/O"></a>&#x975E;&#x963B;&#x585E;I/O</h2><p>&#x5206;&#x800C;&#x6CBB;&#x4E4B;&#x6765;&#x63D0;&#x5347;&#x6027;&#x80FD;&#x3002;</p>
+<h3 id="Reactor"><a href="#Reactor" class="headerlink" title="Reactor"></a>Reactor</h3><p>&#x91C7;&#x7528;&#x4E8B;&#x4EF6;&#x9A71;&#x52A8;&#x6A21;&#x578B;</p>
+<h4 id="Basic-Reactor&#xFF08;&#x5355;&#x7EBF;&#x7A0B;&#xFF09;"><a href="#Basic-Reactor&#xFF08;&#x5355;&#x7EBF;&#x7A0B;&#xFF09;" class="headerlink" title="Basic Reactor&#xFF08;&#x5355;&#x7EBF;&#x7A0B;&#xFF09;"></a>Basic Reactor&#xFF08;&#x5355;&#x7EBF;&#x7A0B;&#xFF09;</h4><p><img src="/2016/05/21/socket-programming-model/socket2.jpg" alt="logo"><br>Reactor&#x4E3A;&#x5355;&#x4E2A;&#x7EBF;&#x7A0B;&#xFF0C;accept&#x8FDE;&#x63A5;&#xFF0C;&#x5E76;&#x5C06;&#x8FDE;&#x63A5;&#x5BF9;&#x5E94;&#x7684;&#x4E8B;&#x4EF6;&#x5206;&#x53D1;&#x5230;&#x76F8;&#x5E94;&#x7684;Handler&#x4E2D;&#x8FDB;&#x884C;&#x5904;&#x7406;&#x3002;</p>
+<p>&#x597D;&#x5904;&#xFF1A;&#x4E0D;&#x9700;&#x8981;&#x6BCF;&#x4E2A;&#x8FDE;&#x63A5;&#x5206;&#x914D;&#x4E00;&#x4E2A;&#x7EBF;&#x7A0B;&#x3002;&#x51CF;&#x5C11;&#x7EBF;&#x7A0B;&#x5207;&#x6362;&#x7684;&#x5F00;&#x9500;&#x3002;<br>&#x574F;&#x5904;&#xFF1A;dispatch&#x53EF;&#x80FD;&#x5835;&#x585E;&#x3002;</p>
+<h4 id="Reactor&#xFF08;&#x591A;&#x7EBF;&#x7A0B;&#xFF09;"><a href="#Reactor&#xFF08;&#x591A;&#x7EBF;&#x7A0B;&#xFF09;" class="headerlink" title="Reactor&#xFF08;&#x591A;&#x7EBF;&#x7A0B;&#xFF09;"></a>Reactor&#xFF08;&#x591A;&#x7EBF;&#x7A0B;&#xFF09;</h4><p><img src="/2016/05/21/socket-programming-model/socket3.jpg" alt="logo"><br>&#x5355;Reactor,worker thread&#x4F7F;&#x7528;&#x7EBF;&#x7A0B;&#x6C60;</p>
+<h4 id="Reactor&#xFF08;&#x591A;Reactor&#xFF09;"><a href="#Reactor&#xFF08;&#x591A;Reactor&#xFF09;" class="headerlink" title="Reactor&#xFF08;&#x591A;Reactor&#xFF09;"></a>Reactor&#xFF08;&#x591A;Reactor&#xFF09;</h4><p><img src="/2016/05/21/socket-programming-model/socket4.jpg" alt="logo"></p>
+<p>&#x5145;&#x5206;&#x5229;&#x7528;&#x7CFB;&#x7EDF;&#x8D44;&#x6E90;&#xFF0C;Reactor&#x5206;&#x4E3A;mainReactor&#x3001;subReactor&#xFF08;&#x7EBF;&#x7A0B;&#x6570;&#x53EF;&#x4EE5;&#x548C;cpu&#x6570;&#x4E00;&#x81F4;&#xFF09;&#xFF0C;mainReactor&#x63A5;&#x53D7;&#x8FDE;&#x63A5;&#xFF0C;subReactor&#x8D1F;&#x8D23;&#x8BFB;&#x5199;&#xFF0C;worker&#x5904;&#x7406;&#x4E1A;&#x52A1;&#x903B;&#x8F91;&#x3002;</p>
+<h3 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h3><p><a href="http://www.jdon.com/concurrent/nio.pdf" target="_blank" rel="external">pdf&#x5728;&#x8FD9;&#x91CC;</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/socket-programming-model/" rel="tag">#socket-programming-model</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/21/我为什么xxx/" rel="next" title="我为什么 xxx">
+                <i class="fa fa-chevron-left"></i> 我为什么 xxx
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/25/SpringMVC通过CROS协议解决跨域问题/" rel="prev" title="SpringMVC通过CROS协议解决跨域问题">
+                SpringMVC通过CROS协议解决跨域问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="wfazong" />
+          <p class="site-author-name" itemprop="name">wfazong</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞I-O"><span class="nav-number">1.</span> <span class="nav-text">阻塞I/O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非阻塞I-O"><span class="nav-number">2.</span> <span class="nav-text">非阻塞I/O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Reactor"><span class="nav-number">2.1.</span> <span class="nav-text">Reactor</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Basic-Reactor（单线程）"><span class="nav-number">2.1.1.</span> <span class="nav-text">Basic Reactor（单线程）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reactor（多线程）"><span class="nav-number">2.1.2.</span> <span class="nav-text">Reactor（多线程）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reactor（多Reactor）"><span class="nav-number">2.1.3.</span> <span class="nav-text">Reactor（多Reactor）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.2.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wfazong</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

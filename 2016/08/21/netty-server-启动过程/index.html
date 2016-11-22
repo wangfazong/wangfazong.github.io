@@ -1,0 +1,611 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="netty," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="netty123456789101112131415public static void main(String args[]) throws InterruptedException {		EventLoopGroup bossGroup = new NioEventLoopGroup();	  		EventLoopGroup workerGroup = new NioEventLoopGro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="netty server 启动过程">
+<meta property="og:url" content="http://yoursite.com/2016/08/21/netty-server-启动过程/index.html">
+<meta property="og:site_name" content="wfazong">
+<meta property="og:description" content="netty123456789101112131415public static void main(String args[]) throws InterruptedException {		EventLoopGroup bossGroup = new NioEventLoopGroup();	  		EventLoopGroup workerGroup = new NioEventLoopGro">
+<meta property="og:updated_time" content="2016-11-22T08:20:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="netty server 启动过程">
+<meta name="twitter:description" content="netty123456789101112131415public static void main(String args[]) throws InterruptedException {		EventLoopGroup bossGroup = new NioEventLoopGroup();	  		EventLoopGroup workerGroup = new NioEventLoopGro">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/08/21/netty-server-启动过程/"/>
+
+  <title> netty server 启动过程 | wfazong </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">wfazong</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                netty server 启动过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-21T10:33:23+08:00" content="2016-08-21">
+              2016-08-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="netty"><a href="#netty" class="headerlink" title="netty"></a>netty</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> <span class="keyword">throws</span> InterruptedException </span>{</span><br><span class="line">		EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup();	  </span><br><span class="line">		EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">		<span class="keyword">try</span>{</span><br><span class="line">			ServerBootstrap bootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">			bootstrap.group(bossGroup, workerGroup);</span><br><span class="line">			bootstrap.channel(NioServerSocketChannel.class); </span><br><span class="line">			bootstrap.childHandler(<span class="keyword">new</span> HelloServerInitializer());</span><br><span class="line">			ChannelFuture f = bootstrap.bind(<span class="number">7878</span>).sync();</span><br><span class="line">			f.channel().closeFuture().sync();</span><br><span class="line">		}<span class="keyword">finally</span>{</span><br><span class="line">			bossGroup.shutdownGracefully();</span><br><span class="line">			workerGroup.shutdownGracefully();</span><br><span class="line">		}</span><br><span class="line">	}</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//MultithreadEventLoopGroup.java</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="title">MultithreadEventLoopGroup</span><span class="params">(<span class="keyword">int</span> nThreads, ThreadFactory threadFactory, Object... args)</span> </span>{</span><br><span class="line">        <span class="keyword">super</span>(nThreads == <span class="number">0</span>? DEFAULT_EVENT_LOOP_THREADS : nThreads, threadFactory, args);</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>&#x5176;&#x4E2D;nthread&#x4E3A;&#x5904;&#x7406;&#x5668;&#x4E2A;&#x6570;&#xFF0A;2&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//MultithreadEventLoopGroup.java</span></span><br><span class="line"> <span class="keyword">static</span> {</span><br><span class="line">        DEFAULT_EVENT_LOOP_THREADS = Math.max(<span class="number">1</span>, SystemPropertyUtil.getInt(</span><br><span class="line">                <span class="string">&quot;io.netty.eventLoopThreads&quot;</span>, Runtime.getRuntime().availableProcessors() * <span class="number">2</span>));</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<ol>
+<li>&#x521D;&#x59CB;&#x5316;&#x5DE5;&#x4F5C;&#x7EBF;&#x7A0B;&#xFF0C;&#x8C03;&#x7528;&#x6784;&#x9020;&#x51FD;&#x6570;&#x5982;&#x4E0B;&#xFF1A;</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//MultithreadEventExecutorGroup.java</span></span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="title">MultithreadEventExecutorGroup</span><span class="params">(<span class="keyword">int</span> nThreads, ThreadFactory threadFactory, Object... args)</span> </span>{</span><br><span class="line">        <span class="keyword">if</span> (nThreads &lt;= <span class="number">0</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">&quot;nThreads: %d (expected: &gt; 0)&quot;</span>, nThreads));</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (threadFactory == <span class="keyword">null</span>) {</span><br><span class="line">            threadFactory = newDefaultThreadFactory();</span><br><span class="line">        }</span><br><span class="line">        children = <span class="keyword">new</span> SingleThreadEventExecutor[nThreads];</span><br><span class="line">        <span class="keyword">if</span> (isPowerOfTwo(children.length)) {</span><br><span class="line">            chooser = <span class="keyword">new</span> PowerOfTwoEventExecutorChooser();</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            chooser = <span class="keyword">new</span> GenericEventExecutorChooser();</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nThreads; i ++) {</span><br><span class="line">            <span class="keyword">boolean</span> success = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                children[i] = newChild(threadFactory, args);   <span class="comment">//....1</span></span><br><span class="line">                success = <span class="keyword">true</span>;</span><br><span class="line">            } <span class="keyword">catch</span> (Exception e) {</span><br><span class="line">                <span class="comment">// <span class="doctag">TODO:</span> Think about if this is a good exception type</span></span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;failed to create a child event loop&quot;</span>, e);</span><br><span class="line">            } <span class="keyword">finally</span> {</span><br><span class="line">                <span class="keyword">if</span> (!success) {</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j ++) {</span><br><span class="line">                        children[j].shutdownGracefully();</span><br><span class="line">                    }</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j ++) {</span><br><span class="line">                        EventExecutor e = children[j];</span><br><span class="line">                        <span class="keyword">try</span> {</span><br><span class="line">                            <span class="keyword">while</span> (!e.isTerminated()) {</span><br><span class="line">                                e.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);</span><br><span class="line">                            }</span><br><span class="line">                        } <span class="keyword">catch</span> (InterruptedException interrupted) {</span><br><span class="line">                            Thread.currentThread().interrupt();</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        }</span><br><span class="line">                    }</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">         <span class="keyword">final</span> FutureListener&lt;Object&gt; terminationListener = <span class="keyword">new</span> FutureListener&lt;Object&gt;() {</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operationComplete</span><span class="params">(Future&lt;Object&gt; future)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">                <span class="keyword">if</span> (terminatedChildren.incrementAndGet() == children.length) {</span><br><span class="line">                    terminationFuture.setSuccess(<span class="keyword">null</span>);</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">        };</span><br><span class="line">        <span class="keyword">for</span> (EventExecutor e: children) {</span><br><span class="line">            e.terminationFuture().addListener(terminationListener);</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>new child()</code> &#x5728;&#x5B50;&#x7C7B;&#x4E2D;&#x5B9E;&#x73B0;&#x3002;</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NioEventLoopGroup.java</span></span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> EventExecutor <span class="title">newChild</span><span class="params">(</span><br><span class="line">            ThreadFactory threadFactory, Object... args)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> NioEventLoop(<span class="keyword">this</span>, threadFactory, (SelectorProvider) args[<span class="number">0</span>]);</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>&#x5728;NioEventLoop&#x7684;&#x6784;&#x9020;&#x51FD;&#x6570;&#x4E2D;&#xFF0C;&#x901A;&#x8FC7;&#x8C03;&#x7528;SingleThreadEventExecutor&#x7684;&#x6784;&#x9020;&#x51FD;&#x6570;&#xFF0C;&#x6700;&#x7EC8;&#x901A;&#x8FC7;threadFactory&#x521B;&#x5EFA;&#x7EBF;&#x7A0B;&#x3002;<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NioEventLoop.java</span></span><br><span class="line">NioEventLoop(NioEventLoopGroup parent, ThreadFactory threadFactory, SelectorProvider selectorProvider,</span><br><span class="line">        SelectStrategy strategy) {</span><br><span class="line">        <span class="keyword">super</span>(parent, threadFactory, <span class="keyword">false</span>);  <span class="comment">//..2</span></span><br><span class="line">        <span class="keyword">if</span> (selectorProvider == <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;selectorProvider&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (strategy == <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;selectStrategy&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        provider = selectorProvider;</span><br><span class="line">        selector = openSelector();</span><br><span class="line">        selectStrategy = strategy;</span><br><span class="line">    }</span><br></pre></td></tr></table></figure></p>
+<p>selectorProvider &#x201C;java.nio.channels.spi.SelectorProvider&#x201D;<br>SelectStrategy  &#xFF1A;DefaultSelectStrategyFactory<br><code>bootstrap.channel()</code> &#x4E2D;&#x8C03;&#x7528;<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SingleThreadEventExecutor.java</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="title">SingleThreadEventExecutor</span><span class="params">(</span><br><span class="line">            EventExecutorGroup parent, ThreadFactory threadFactory, <span class="keyword">boolean</span> addTaskWakesUp)</span> </span>{</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (threadFactory == <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;threadFactory&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">        <span class="keyword">this</span>.addTaskWakesUp = addTaskWakesUp;</span><br><span class="line">        thread = threadFactory.newThread(<span class="keyword">new</span> Runnable() {</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{</span><br><span class="line">                <span class="keyword">boolean</span> success = <span class="keyword">false</span>;</span><br><span class="line">                updateLastExecutionTime();</span><br><span class="line">                <span class="keyword">try</span> {</span><br><span class="line">                    SingleThreadEventExecutor.<span class="keyword">this</span>.run(); <span class="comment">//&#x961F;&#x5217;&#x4E2D;&#x53D6;&#x4EFB;&#x52A1;&#x6267;&#x884C;</span></span><br><span class="line">                    success = <span class="keyword">true</span>;</span><br><span class="line">                } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                    logger.warn(<span class="string">&quot;Unexpected exception from an event executor: &quot;</span>, t);</span><br><span class="line">                } <span class="keyword">finally</span> {</span><br><span class="line">                    <span class="keyword">for</span> (;;) {</span><br><span class="line">                        <span class="keyword">int</span> oldState = STATE_UPDATER.get(SingleThreadEventExecutor.<span class="keyword">this</span>);</span><br><span class="line">                        <span class="keyword">if</span> (oldState &gt;= ST_SHUTTING_DOWN || STATE_UPDATER.compareAndSet(</span><br><span class="line">                                SingleThreadEventExecutor.<span class="keyword">this</span>, oldState, ST_SHUTTING_DOWN)) {</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        }</span><br><span class="line">                    }</span><br><span class="line">                    <span class="comment">// Check if confirmShutdown() was called at the end of the loop.</span></span><br><span class="line">                    <span class="keyword">if</span> (success &amp;&amp; gracefulShutdownStartTime == <span class="number">0</span>) {</span><br><span class="line">                        logger.error(</span><br><span class="line">                                <span class="string">&quot;Buggy &quot;</span> + EventExecutor.class.getSimpleName() + <span class="string">&quot; implementation; &quot;</span> +</span><br><span class="line">                                SingleThreadEventExecutor.class.getSimpleName() + <span class="string">&quot;.confirmShutdown() must be called &quot;</span> +</span><br><span class="line">                                <span class="string">&quot;before run() implementation terminates.&quot;</span>);</span><br><span class="line">                    }</span><br><span class="line">                    <span class="keyword">try</span> {</span><br><span class="line">                        <span class="comment">// Run all remaining tasks and shutdown hooks.</span></span><br><span class="line">                        <span class="keyword">for</span> (;;) {</span><br><span class="line">                            <span class="keyword">if</span> (confirmShutdown()) {</span><br><span class="line">                                <span class="keyword">break</span>;</span><br><span class="line">                            }</span><br><span class="line">                        }</span><br><span class="line">                    } <span class="keyword">finally</span> {</span><br><span class="line">                        <span class="keyword">try</span> {</span><br><span class="line">                            cleanup();</span><br><span class="line">                        } <span class="keyword">finally</span> {</span><br><span class="line">                            STATE_UPDATER.set(SingleThreadEventExecutor.<span class="keyword">this</span>, ST_TERMINATED);</span><br><span class="line">                            threadLock.release();</span><br><span class="line">                            <span class="keyword">if</span> (!taskQueue.isEmpty()) {</span><br><span class="line">                                logger.warn(</span><br><span class="line">                                        <span class="string">&quot;An event executor terminated with &quot;</span> +</span><br><span class="line">                                        <span class="string">&quot;non-empty task queue (&quot;</span> + taskQueue.size() + <span class="string">&apos;)&apos;</span>);</span><br><span class="line">                            }</span><br><span class="line">                            terminationFuture.setSuccess(<span class="keyword">null</span>);</span><br><span class="line">                        }</span><br><span class="line">                    }</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">        });</span><br><span class="line">        taskQueue = newTaskQueue();  <span class="comment">//LinkedBlockingQueue</span></span><br><span class="line">    }</span><br></pre></td></tr></table></figure></p>
+<p>&#x901A;&#x8FC7;SingleThreadEventExecutor.this.run()&#x542F;&#x52A8;&#x7EBF;&#x7A0B;&#x5F00;&#x59CB;&#x5FAA;&#x73AF;&#xFF0C;&#x901A;&#x8FC7;processSelectedKeys()&#x8D1F;&#x8D23;I&#xFF0F;O&#x8BFB;&#x5199;&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NioEventLoop.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Selector <span class="title">openSelector</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">final</span> Selector selector;</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            selector = provider.openSelector();</span><br><span class="line">        } <span class="keyword">catch</span> (IOException e) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ChannelException(<span class="string">&quot;failed to open a new selector&quot;</span>, e);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (DISABLE_KEYSET_OPTIMIZATION) {</span><br><span class="line">            <span class="keyword">return</span> selector;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            SelectedSelectionKeySet selectedKeySet = <span class="keyword">new</span> SelectedSelectionKeySet();</span><br><span class="line">            Class&lt;?&gt; selectorImplClass =</span><br><span class="line">                    Class.forName(<span class="string">&quot;sun.nio.ch.SelectorImpl&quot;</span>, <span class="keyword">false</span>, PlatformDependent.getSystemClassLoader());</span><br><span class="line">            <span class="comment">// Ensure the current selector implementation is what we can instrument.</span></span><br><span class="line">            <span class="keyword">if</span> (!selectorImplClass.isAssignableFrom(selector.getClass())) {</span><br><span class="line">                <span class="keyword">return</span> selector;</span><br><span class="line">            }</span><br><span class="line">            Field selectedKeysField = selectorImplClass.getDeclaredField(<span class="string">&quot;selectedKeys&quot;</span>);</span><br><span class="line">            Field publicSelectedKeysField = selectorImplClass.getDeclaredField(<span class="string">&quot;publicSelectedKeys&quot;</span>);</span><br><span class="line">            selectedKeysField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            publicSelectedKeysField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            selectedKeysField.set(selector, selectedKeySet);</span><br><span class="line">            publicSelectedKeysField.set(selector, selectedKeySet);</span><br><span class="line">            selectedKeys = selectedKeySet;</span><br><span class="line">            logger.trace(<span class="string">&quot;Instrumented an optimized java.util.Set into: {}&quot;</span>, selector);</span><br><span class="line">        } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">            selectedKeys = <span class="keyword">null</span>;</span><br><span class="line">            logger.trace(<span class="string">&quot;Failed to instrument an optimized java.util.Set into: {}&quot;</span>, selector, t);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">return</span> selector;</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<ol>
+<li>channel</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AbstractBootstrap</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> B <span class="title">channel</span><span class="params">(Class&lt;? extends C&gt; channelClass)</span> </span>{</span><br><span class="line">        <span class="keyword">if</span> (channelClass == <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;channelClass&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">return</span> channelFactory(<span class="keyword">new</span> BootstrapChannelFactory&lt;C&gt;(channelClass));</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">BootstrapChannelFactory</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Channel</span>&gt; <span class="keyword">implements</span> <span class="title">ChannelFactory</span>&lt;<span class="title">T</span>&gt; </span>{</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Class&lt;? extends T&gt; clazz;</span><br><span class="line">        BootstrapChannelFactory(Class&lt;? extends T&gt; clazz) {</span><br><span class="line">            <span class="keyword">this</span>.clazz = clazz;</span><br><span class="line">        }</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> T <span class="title">newChannel</span><span class="params">()</span> </span>{</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                <span class="keyword">return</span> clazz.newInstance();</span><br><span class="line">            } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ChannelException(<span class="string">&quot;Unable to create Channel from class &quot;</span> + clazz, t);</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>{</span><br><span class="line">            <span class="keyword">return</span> StringUtil.simpleClassName(clazz) + <span class="string">&quot;.class&quot;</span>;</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>3.&#x7AEF;&#x53E3;&#x7ED1;&#x5B9A;&#xFF1A;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ChannelFuture <span class="title">doBind</span><span class="params">(<span class="keyword">final</span> SocketAddress localAddress)</span> </span>{</span><br><span class="line">        <span class="keyword">final</span> ChannelFuture regFuture = initAndRegister();</span><br><span class="line">        <span class="keyword">final</span> Channel channel = regFuture.channel();</span><br><span class="line">        <span class="keyword">if</span> (regFuture.cause() != <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">return</span> regFuture;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (regFuture.isDone()) {</span><br><span class="line">            <span class="comment">// At this point we know that the registration was complete and successful.</span></span><br><span class="line">            ChannelPromise promise = channel.newPromise();</span><br><span class="line">            doBind0(regFuture, channel, localAddress, promise);</span><br><span class="line">            <span class="keyword">return</span> promise;</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            <span class="comment">// Registration future is almost always fulfilled already, but just in case it&apos;s not.</span></span><br><span class="line">            <span class="keyword">final</span> PendingRegistrationPromise promise = <span class="keyword">new</span> PendingRegistrationPromise(channel);</span><br><span class="line">            regFuture.addListener(<span class="keyword">new</span> ChannelFutureListener() {</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operationComplete</span><span class="params">(ChannelFuture future)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">                    Throwable cause = future.cause();</span><br><span class="line">                    <span class="keyword">if</span> (cause != <span class="keyword">null</span>) {</span><br><span class="line">                        promise.setFailure(cause);</span><br><span class="line">                    } <span class="keyword">else</span> {</span><br><span class="line">                        promise.executor = channel.eventLoop();</span><br><span class="line">                    }</span><br><span class="line">                    doBind0(regFuture, channel, localAddress, promise);</span><br><span class="line">                }</span><br><span class="line">            });</span><br><span class="line">            <span class="keyword">return</span> promise;</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> ChannelFuture <span class="title">initAndRegister</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">final</span> Channel channel = channelFactory().newChannel();</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            init(channel);</span><br><span class="line">        } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">            channel.unsafe().closeForcibly();</span><br><span class="line">            <span class="comment">// as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(t);</span><br><span class="line">        }</span><br><span class="line">        ChannelFuture regFuture = group().register(channel);</span><br><span class="line">        <span class="keyword">if</span> (regFuture.cause() != <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">if</span> (channel.isRegistered()) {</span><br><span class="line">                channel.close();</span><br><span class="line">            } <span class="keyword">else</span> {</span><br><span class="line">                channel.unsafe().closeForcibly();</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">return</span> regFuture;</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>channelFactory().newChannel()&#x4F1A;&#x751F;&#x6210;NioServerSocketChannel&#xFF0C;&#x5E76;&#x6700;&#x7EC8;&#x5728;AbstractChannel&#x91CC;&#x521B;&#x5EFA;DefaultChannelPipeline&#x5BF9;&#x8C61;&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AbstractChannel</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="title">AbstractChannel</span><span class="params">(Channel parent)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">        unsafe = newUnsafe();</span><br><span class="line">        pipeline = <span class="keyword">new</span> DefaultChannelPipeline(<span class="keyword">this</span>);</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>DefaultChannelPipeline&#x4E2D;&#x521B;&#x5EFA;TailContext, HeadContext&#x4E24;&#x4E2A;&#x9ED8;&#x8BA4;&#x7684;handler&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//DefaultChannelPipeline</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">DefaultChannelPipeline</span><span class="params">(AbstractChannel channel)</span> </span>{</span><br><span class="line">        <span class="keyword">if</span> (channel == <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;channel&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">this</span>.channel = channel;</span><br><span class="line">        tail = <span class="keyword">new</span> TailContext(<span class="keyword">this</span>);</span><br><span class="line">        head = <span class="keyword">new</span> HeadContext(<span class="keyword">this</span>);</span><br><span class="line">        head.next = tail;</span><br><span class="line">        tail.prev = head;</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>init&#x4E2D;&#x8BBE;&#x7F6E;channel&#x5C5E;&#x6027;&#xFF0C;&#x5E76;&#x6DFB;&#x52A0;ChannelInitializer&#xFF0C;&#x6B64;&#x65F6;&#xFF1A;<br>    HeadContext &lt;&#x2013;&gt; channelInitializer &lt;&#x2013;&gt; TailContext </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(Channel channel)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">       <span class="keyword">final</span> Map&lt;ChannelOption&lt;?&gt;, Object&gt; options = options();</span><br><span class="line">       <span class="keyword">synchronized</span> (options) {</span><br><span class="line">           channel.config().setOptions(options);</span><br><span class="line">       }</span><br><span class="line">       <span class="keyword">final</span> Map&lt;AttributeKey&lt;?&gt;, Object&gt; attrs = attrs();</span><br><span class="line">       <span class="keyword">synchronized</span> (attrs) {</span><br><span class="line">           <span class="keyword">for</span> (Entry&lt;AttributeKey&lt;?&gt;, Object&gt; e: attrs.entrySet()) {</span><br><span class="line">               <span class="meta">@SuppressWarnings</span>(<span class="string">&quot;unchecked&quot;</span>)</span><br><span class="line">               AttributeKey&lt;Object&gt; key = (AttributeKey&lt;Object&gt;) e.getKey();</span><br><span class="line">               channel.attr(key).set(e.getValue());</span><br><span class="line">           }</span><br><span class="line">       }</span><br><span class="line">       ChannelPipeline p = channel.pipeline();</span><br><span class="line">       <span class="keyword">if</span> (handler() != <span class="keyword">null</span>) {</span><br><span class="line">           p.addLast(handler());</span><br><span class="line">       }</span><br><span class="line">       <span class="keyword">final</span> EventLoopGroup currentChildGroup = childGroup;</span><br><span class="line">       <span class="keyword">final</span> ChannelHandler currentChildHandler = childHandler;</span><br><span class="line">       <span class="keyword">final</span> Entry&lt;ChannelOption&lt;?&gt;, Object&gt;[] currentChildOptions;</span><br><span class="line">       <span class="keyword">final</span> Entry&lt;AttributeKey&lt;?&gt;, Object&gt;[] currentChildAttrs;</span><br><span class="line">       <span class="keyword">synchronized</span> (childOptions) {</span><br><span class="line">           currentChildOptions = childOptions.entrySet().toArray(newOptionArray(childOptions.size()));</span><br><span class="line">       }</span><br><span class="line">       <span class="keyword">synchronized</span> (childAttrs) {</span><br><span class="line">           currentChildAttrs = childAttrs.entrySet().toArray(newAttrArray(childAttrs.size()));</span><br><span class="line">       }</span><br><span class="line">       p.addLast(<span class="keyword">new</span> ChannelInitializer&lt;Channel&gt;() {</span><br><span class="line">           <span class="meta">@Override</span></span><br><span class="line">           <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(Channel ch)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">               ch.pipeline().addLast(<span class="keyword">new</span> ServerBootstrapAcceptor(</span><br><span class="line">                       currentChildGroup, currentChildHandler, currentChildOptions, currentChildAttrs));</span><br><span class="line">           }</span><br><span class="line">       });</span><br><span class="line">   }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SingleThreadEventLoop.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ChannelFuture <span class="title">register</span><span class="params">(<span class="keyword">final</span> Channel channel, <span class="keyword">final</span> ChannelPromise promise)</span> </span>{</span><br><span class="line">        <span class="keyword">if</span> (channel == <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;channel&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (promise == <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;promise&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        channel.unsafe().register(<span class="keyword">this</span>, promise);</span><br><span class="line">        <span class="keyword">return</span> promise;</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>&#x4F1A;&#x5728;eventLoop.inEventLoop&#x5224;&#x65AD;&#x662F;&#x5426;&#x4E3A;&#x5F53;&#x524D;&#x7EBF;&#x7A0B;&#xFF0C;&#x5206;&#x5F00;&#x5904;&#x7406;&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AbstractChannel$AbstractUnsafe</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">(EventLoop eventLoop, <span class="keyword">final</span> ChannelPromise promise)</span> </span>{</span><br><span class="line">            <span class="keyword">if</span> (eventLoop == <span class="keyword">null</span>) {</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;eventLoop&quot;</span>);</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">if</span> (isRegistered()) {</span><br><span class="line">                promise.setFailure(<span class="keyword">new</span> IllegalStateException(<span class="string">&quot;registered to an event loop already&quot;</span>));</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">if</span> (!isCompatible(eventLoop)) {</span><br><span class="line">                promise.setFailure(</span><br><span class="line">                        <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;incompatible event loop type: &quot;</span> + eventLoop.getClass().getName()));</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            }</span><br><span class="line">            AbstractChannel.<span class="keyword">this</span>.eventLoop = eventLoop;</span><br><span class="line">            <span class="keyword">if</span> (eventLoop.inEventLoop()) {</span><br><span class="line">                register0(promise);</span><br><span class="line">            } <span class="keyword">else</span> {</span><br><span class="line">                <span class="keyword">try</span> {</span><br><span class="line">                    eventLoop.execute(<span class="keyword">new</span> OneTimeTask() {</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{</span><br><span class="line">                            register0(promise);</span><br><span class="line">                        }</span><br><span class="line">                    });</span><br><span class="line">                } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                    logger.warn(</span><br><span class="line">                            <span class="string">&quot;Force-closing a channel whose registration task was not accepted by an event loop: {}&quot;</span>,</span><br><span class="line">                            AbstractChannel.<span class="keyword">this</span>, t);</span><br><span class="line">                    closeForcibly();</span><br><span class="line">                    closeFuture.setClosed();</span><br><span class="line">                    safeSetFailure(promise, t);</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">        }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">register0</span><span class="params">(ChannelPromise promise)</span> </span>{</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                <span class="keyword">if</span> (!promise.setUncancellable() || !ensureOpen(promise)) {</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                }</span><br><span class="line">                <span class="keyword">boolean</span> firstRegistration = neverRegistered;</span><br><span class="line">                doRegister();</span><br><span class="line">                neverRegistered = <span class="keyword">false</span>;</span><br><span class="line">                registered = <span class="keyword">true</span>;</span><br><span class="line">                safeSetSuccess(promise);</span><br><span class="line">                pipeline.fireChannelRegistered();</span><br><span class="line">                <span class="keyword">if</span> (firstRegistration &amp;&amp; isActive()) {</span><br><span class="line">                    pipeline.fireChannelActive();</span><br><span class="line">                }</span><br><span class="line">            } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                <span class="comment">// Close the channel directly to avoid FD leak.</span></span><br><span class="line">                closeForcibly();</span><br><span class="line">                closeFuture.setClosed();</span><br><span class="line">                safeSetFailure(promise, t);</span><br><span class="line">            }</span><br><span class="line">        }</span><br></pre></td></tr></table></figure>
+<p>register0 &#x4E2D;&#x6CE8;&#x518C;&#x540E;&#x4F1A;&#x8C03;&#x7528;pipeline.fireChannelRegistered&#x5728;pipeline&#x4E2D;&#x5411;&#x540E;&#x627E;&#xFF0C;&#x76F4;&#x5230;ChannelInboundHandler.channelRegistered&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">channelRegistered</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        initChannel((C) ctx.channel());</span><br><span class="line">        ctx.pipeline().remove(<span class="keyword">this</span>);</span><br><span class="line">        ctx.pipeline().fireChannelRegistered();</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>&#x5728;channelRegistered&#x4E2D;&#x8C03;&#x7528;&#x8986;&#x76D6;&#x7684;initChannel&#x65B9;&#x6CD5;&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{</span><br><span class="line">       <span class="keyword">for</span> (;;) {</span><br><span class="line">           <span class="keyword">try</span> {</span><br><span class="line">               <span class="keyword">switch</span> (selectStrategy.calculateStrategy(selectNowSupplier, hasTasks())) {</span><br><span class="line">                   <span class="keyword">case</span> SelectStrategy.CONTINUE:</span><br><span class="line">                       <span class="keyword">continue</span>;</span><br><span class="line">                   <span class="keyword">case</span> SelectStrategy.SELECT:</span><br><span class="line">                       select(wakenUp.getAndSet(<span class="keyword">false</span>));</span><br><span class="line"></span><br><span class="line">                       <span class="keyword">if</span> (wakenUp.get()) {</span><br><span class="line">                           selector.wakeup();</span><br><span class="line">                       }</span><br><span class="line">                   <span class="keyword">default</span>:</span><br><span class="line">               }</span><br><span class="line">               cancelledKeys = <span class="number">0</span>;</span><br><span class="line">               needsToSelectAgain = <span class="keyword">false</span>;</span><br><span class="line">               <span class="keyword">final</span> <span class="keyword">int</span> ioRatio = <span class="keyword">this</span>.ioRatio;</span><br><span class="line">               <span class="keyword">if</span> (ioRatio == <span class="number">100</span>) {</span><br><span class="line">                   processSelectedKeys();</span><br><span class="line">                   runAllTasks();</span><br><span class="line">               } <span class="keyword">else</span> {</span><br><span class="line">                   <span class="keyword">final</span> <span class="keyword">long</span> ioStartTime = System.nanoTime();</span><br><span class="line">                   processSelectedKeys();</span><br><span class="line">                   <span class="keyword">final</span> <span class="keyword">long</span> ioTime = System.nanoTime() - ioStartTime;</span><br><span class="line">                   runAllTasks(ioTime * (<span class="number">100</span> - ioRatio) / ioRatio);</span><br><span class="line">               }</span><br><span class="line">               <span class="keyword">if</span> (isShuttingDown()) {</span><br><span class="line">                   closeAll();</span><br><span class="line">                   <span class="keyword">if</span> (confirmShutdown()) {</span><br><span class="line">                       <span class="keyword">break</span>;</span><br><span class="line">                   }</span><br><span class="line">               }</span><br><span class="line">           } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">               logger.warn(<span class="string">&quot;Unexpected exception in the selector loop.&quot;</span>, t);</span><br><span class="line">               <span class="keyword">try</span> {</span><br><span class="line">                   Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">               } <span class="keyword">catch</span> (InterruptedException e) {</span><br><span class="line">                   <span class="comment">// Ignore.</span></span><br><span class="line">               }</span><br><span class="line">           }</span><br><span class="line">       }</span><br><span class="line">   }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NioEventLoop</span></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processSelectedKeys</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">if</span> (selectedKeys != <span class="keyword">null</span>) {</span><br><span class="line">            processSelectedKeysOptimized(selectedKeys.flip());</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            processSelectedKeysPlain(selector.selectedKeys());</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NioEventLoop</span></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processSelectedKeysOptimized</span><span class="params">(SelectionKey[] selectedKeys)</span> </span>{</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;; i ++) {</span><br><span class="line">            <span class="keyword">final</span> SelectionKey k = selectedKeys[i];</span><br><span class="line">            <span class="keyword">if</span> (k == <span class="keyword">null</span>) {</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            }</span><br><span class="line">            selectedKeys[i] = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">final</span> Object a = k.attachment();</span><br><span class="line">            <span class="keyword">if</span> (a <span class="keyword">instanceof</span> AbstractNioChannel) {</span><br><span class="line">                processSelectedKey(k, (AbstractNioChannel) a);</span><br><span class="line">            } <span class="keyword">else</span> {</span><br><span class="line">                <span class="meta">@SuppressWarnings</span>(<span class="string">&quot;unchecked&quot;</span>)</span><br><span class="line">                NioTask&lt;SelectableChannel&gt; task = (NioTask&lt;SelectableChannel&gt;) a;</span><br><span class="line">                processSelectedKey(k, task);</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">if</span> (needsToSelectAgain) {</span><br><span class="line">                <span class="keyword">for</span> (;;) {</span><br><span class="line">                    <span class="keyword">if</span> (selectedKeys[i] == <span class="keyword">null</span>) {</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    }</span><br><span class="line">                    selectedKeys[i] = <span class="keyword">null</span>;</span><br><span class="line">                    i++;</span><br><span class="line">                }</span><br><span class="line">                selectAgain();</span><br><span class="line">                selectedKeys = <span class="keyword">this</span>.selectedKeys.flip();</span><br><span class="line">                i = -<span class="number">1</span>;</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NioEventLoop</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">processSelectedKey</span><span class="params">(SelectionKey k, AbstractNioChannel ch)</span> </span>{</span><br><span class="line">        <span class="keyword">final</span> NioUnsafe unsafe = ch.unsafe();</span><br><span class="line">        <span class="keyword">if</span> (!k.isValid()) {</span><br><span class="line">            <span class="comment">// close the channel if the key is not valid anymore</span></span><br><span class="line">            unsafe.close(unsafe.voidPromise());</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            <span class="keyword">int</span> readyOps = k.readyOps();</span><br><span class="line">            <span class="comment">// Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead</span></span><br><span class="line">            <span class="comment">// to a spin loop</span></span><br><span class="line">            <span class="keyword">if</span> ((readyOps &amp; (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != <span class="number">0</span> || readyOps == <span class="number">0</span>) {</span><br><span class="line">                unsafe.read();</span><br><span class="line">                <span class="keyword">if</span> (!ch.isOpen()) {</span><br><span class="line">                    <span class="comment">// Connection already closed - no need to handle write.</span></span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">if</span> ((readyOps &amp; SelectionKey.OP_WRITE) != <span class="number">0</span>) {</span><br><span class="line">                <span class="comment">// Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write</span></span><br><span class="line">                ch.unsafe().forceFlush();</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">if</span> ((readyOps &amp; SelectionKey.OP_CONNECT) != <span class="number">0</span>) {</span><br><span class="line">                <span class="comment">// remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking</span></span><br><span class="line">                <span class="comment">// See https://github.com/netty/netty/issues/924</span></span><br><span class="line">                <span class="keyword">int</span> ops = k.interestOps();</span><br><span class="line">                ops &amp;= ~SelectionKey.OP_CONNECT;</span><br><span class="line">                k.interestOps(ops);</span><br><span class="line">                unsafe.finishConnect();</span><br><span class="line">            }</span><br><span class="line">        } <span class="keyword">catch</span> (CancelledKeyException ignored) {</span><br><span class="line">            unsafe.close(unsafe.voidPromise());</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">NioMessageUnsafe</span> <span class="keyword">extends</span> <span class="title">AbstractNioUnsafe</span> </span>{</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> List&lt;Object&gt; readBuf = <span class="keyword">new</span> ArrayList&lt;Object&gt;();</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> </span>{</span><br><span class="line">            <span class="function"><span class="keyword">assert</span> <span class="title">eventLoop</span><span class="params">()</span>.<span class="title">inEventLoop</span><span class="params">()</span></span>;</span><br><span class="line">            <span class="keyword">final</span> ChannelConfig config = config();</span><br><span class="line">            <span class="keyword">if</span> (!config.isAutoRead() &amp;&amp; !isReadPending()) {</span><br><span class="line">                <span class="comment">// ChannelConfig.setAutoRead(false) was called in the meantime</span></span><br><span class="line">                removeReadOp();</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> maxMessagesPerRead = config.getMaxMessagesPerRead();</span><br><span class="line">            <span class="keyword">final</span> ChannelPipeline pipeline = pipeline();</span><br><span class="line">            <span class="keyword">boolean</span> closed = <span class="keyword">false</span>;</span><br><span class="line">            Throwable exception = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                <span class="keyword">try</span> {</span><br><span class="line">                    <span class="keyword">for</span> (;;) {</span><br><span class="line">                        <span class="keyword">int</span> localRead = doReadMessages(readBuf);</span><br><span class="line">                        <span class="keyword">if</span> (localRead == <span class="number">0</span>) {</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        }</span><br><span class="line">                        <span class="keyword">if</span> (localRead &lt; <span class="number">0</span>) {</span><br><span class="line">                            closed = <span class="keyword">true</span>;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        }</span><br><span class="line">                        <span class="comment">// stop reading and remove op</span></span><br><span class="line">                        <span class="keyword">if</span> (!config.isAutoRead()) {</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        }</span><br><span class="line">                        <span class="keyword">if</span> (readBuf.size() &gt;= maxMessagesPerRead) {</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        }</span><br><span class="line">                    }</span><br><span class="line">                } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                    exception = t;</span><br><span class="line">                }</span><br><span class="line">                setReadPending(<span class="keyword">false</span>);</span><br><span class="line">                <span class="keyword">int</span> size = readBuf.size();</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i ++) {</span><br><span class="line">                    pipeline.fireChannelRead(readBuf.get(i));</span><br><span class="line">                }</span><br><span class="line">                readBuf.clear();</span><br><span class="line">                pipeline.fireChannelReadComplete();</span><br><span class="line">                <span class="keyword">if</span> (exception != <span class="keyword">null</span>) {</span><br><span class="line">                    <span class="keyword">if</span> (exception <span class="keyword">instanceof</span> IOException &amp;&amp; !(exception <span class="keyword">instanceof</span> PortUnreachableException)) {</span><br><span class="line">                        <span class="comment">// ServerChannel should not be closed even on IOException because it can often continue</span></span><br><span class="line">                        <span class="comment">// accepting incoming connections. (e.g. too many open files)</span></span><br><span class="line">                        closed = !(AbstractNioMessageChannel.<span class="keyword">this</span> <span class="keyword">instanceof</span> ServerChannel);</span><br><span class="line">                    }</span><br><span class="line">                    pipeline.fireExceptionCaught(exception);</span><br><span class="line">                }</span><br><span class="line">                <span class="keyword">if</span> (closed) {</span><br><span class="line">                    <span class="keyword">if</span> (isOpen()) {</span><br><span class="line">                        close(voidPromise());</span><br><span class="line">                    }</span><br><span class="line">                }</span><br><span class="line">            } <span class="keyword">finally</span> {</span><br><span class="line">                <span class="comment">// Check if there is a readPending which was not processed yet.</span></span><br><span class="line">                <span class="comment">// This could be for two reasons:</span></span><br><span class="line">                <span class="comment">// * The user called Channel.read() or ChannelHandlerContext.read() in channelRead(...) method</span></span><br><span class="line">                <span class="comment">// * The user called Channel.read() or ChannelHandlerContext.read() in channelReadComplete(...) method</span></span><br><span class="line">                <span class="comment">//</span></span><br><span class="line">                <span class="comment">// See https://github.com/netty/netty/issues/2254</span></span><br><span class="line">                <span class="keyword">if</span> (!config.isAutoRead() &amp;&amp; !isReadPending()) {</span><br><span class="line">                    removeReadOp();</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">doReadMessages</span><span class="params">(List&lt;Object&gt; buf)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">       SocketChannel ch = javaChannel().accept();</span><br><span class="line">       <span class="keyword">try</span> {</span><br><span class="line">           <span class="keyword">if</span> (ch != <span class="keyword">null</span>) {</span><br><span class="line">               buf.add(<span class="keyword">new</span> NioSocketChannel(<span class="keyword">this</span>, ch));</span><br><span class="line">               <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">           }</span><br><span class="line">       } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">           logger.warn(<span class="string">&quot;Failed to create a new channel from an accepted socket.&quot;</span>, t);</span><br><span class="line">           <span class="keyword">try</span> {</span><br><span class="line">               ch.close();</span><br><span class="line">           } <span class="keyword">catch</span> (Throwable t2) {</span><br><span class="line">               logger.warn(<span class="string">&quot;Failed to close a socket.&quot;</span>, t2);</span><br><span class="line">           }</span><br><span class="line">       }</span><br><span class="line">       <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//DefaultChannelPipeline</span></span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ChannelPipeline <span class="title">fireChannelRead</span><span class="params">(Object msg)</span> </span>{</span><br><span class="line">        head.fireChannelRead(msg);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ServerBootstrapAcceptor.java</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> </span>{</span><br><span class="line">            <span class="keyword">final</span> Channel child = (Channel) msg;</span><br><span class="line">            child.pipeline().addLast(childHandler);</span><br><span class="line">            <span class="keyword">for</span> (Entry&lt;ChannelOption&lt;?&gt;, Object&gt; e: childOptions) {</span><br><span class="line">                <span class="keyword">try</span> {</span><br><span class="line">                    <span class="keyword">if</span> (!child.config().setOption((ChannelOption&lt;Object&gt;) e.getKey(), e.getValue())) {</span><br><span class="line">                        logger.warn(<span class="string">&quot;Unknown channel option: &quot;</span> + e);</span><br><span class="line">                    }</span><br><span class="line">                } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                    logger.warn(<span class="string">&quot;Failed to set a channel option: &quot;</span> + child, t);</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">for</span> (Entry&lt;AttributeKey&lt;?&gt;, Object&gt; e: childAttrs) {</span><br><span class="line">                child.attr((AttributeKey&lt;Object&gt;) e.getKey()).set(e.getValue());</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                childGroup.register(child).addListener(<span class="keyword">new</span> ChannelFutureListener() {</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operationComplete</span><span class="params">(ChannelFuture future)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">                        <span class="keyword">if</span> (!future.isSuccess()) {</span><br><span class="line">                            forceClose(child, future.cause());</span><br><span class="line">                        }</span><br><span class="line">                    }</span><br><span class="line">                });</span><br><span class="line">            } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                forceClose(child, t);</span><br><span class="line">            }</span><br><span class="line">        }</span><br></pre></td></tr></table></figure>
+<p>&#x5C06;channel&#x6CE8;&#x518C;&#x5230;childGroup&#x540E;&#xFF0C;run()&#x7EE7;&#x7EED;&#x6267;&#x884C;&#xFF0C;&#x5728;NettyLearnSeverHandler&#x4E2D;&#x7684;channelRead,&#x5728;worker&#x7EBF;&#x7A0B;&#x4E2D;&#x5B8C;&#x6210;&#x4E1A;&#x52A1;&#x903B;&#x8F91;&#x7684;&#x6267;&#x884C;&#x3002;</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/netty/" rel="tag">#netty</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/02/tomcat处理http请求过程分析/" rel="next" title="tomcat处理http请求过程分析">
+                <i class="fa fa-chevron-left"></i> tomcat处理http请求过程分析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/16/使用hash作为redis的存储类型以节省内存/" rel="prev" title="使用hash作为redis的存储类型以节省内存">
+                使用hash作为redis的存储类型以节省内存 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="wfazong" />
+          <p class="site-author-name" itemprop="name">wfazong</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#netty"><span class="nav-number">1.</span> <span class="nav-text">netty</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wfazong</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

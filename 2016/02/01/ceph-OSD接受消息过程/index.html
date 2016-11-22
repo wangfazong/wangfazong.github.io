@@ -1,0 +1,588 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ceph," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;#x5728;Ceph_osd.cc&amp;#x4E2D;&amp;#x7684;main()&amp;#x4E2D;&amp;#x542F;&amp;#x52A8;osd&amp;#xFF0C;&amp;#x5728;main()&amp;#x4E2D;&amp;#x4F1A;&amp;#x521B;&amp;#x5EFA;Messenger&amp;#x7C7B;&amp;#x7684;&amp;#x5B50;&amp;#x7C7B;SimpleMessenger&amp;#x6765;&amp;#x7BA1;&amp;#x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ceph OSD接受消息过程">
+<meta property="og:url" content="http://yoursite.com/2016/02/01/ceph-OSD接受消息过程/index.html">
+<meta property="og:site_name" content="wfazong">
+<meta property="og:description" content="&amp;#x5728;Ceph_osd.cc&amp;#x4E2D;&amp;#x7684;main()&amp;#x4E2D;&amp;#x542F;&amp;#x52A8;osd&amp;#xFF0C;&amp;#x5728;main()&amp;#x4E2D;&amp;#x4F1A;&amp;#x521B;&amp;#x5EFA;Messenger&amp;#x7C7B;&amp;#x7684;&amp;#x5B50;&amp;#x7C7B;SimpleMessenger&amp;#x6765;&amp;#x7BA1;&amp;#x">
+<meta property="og:updated_time" content="2016-11-22T08:15:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ceph OSD接受消息过程">
+<meta name="twitter:description" content="&amp;#x5728;Ceph_osd.cc&amp;#x4E2D;&amp;#x7684;main()&amp;#x4E2D;&amp;#x542F;&amp;#x52A8;osd&amp;#xFF0C;&amp;#x5728;main()&amp;#x4E2D;&amp;#x4F1A;&amp;#x521B;&amp;#x5EFA;Messenger&amp;#x7C7B;&amp;#x7684;&amp;#x5B50;&amp;#x7C7B;SimpleMessenger&amp;#x6765;&amp;#x7BA1;&amp;#x">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/02/01/ceph-OSD接受消息过程/"/>
+
+  <title> ceph OSD接受消息过程 | wfazong </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">wfazong</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ceph OSD接受消息过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-01T14:49:40+08:00" content="2016-02-01">
+              2016-02-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>   &#x5728;Ceph_osd.cc&#x4E2D;&#x7684;main()&#x4E2D;&#x542F;&#x52A8;osd&#xFF0C;&#x5728;main()&#x4E2D;&#x4F1A;&#x521B;&#x5EFA;Messenger&#x7C7B;&#x7684;&#x5B50;&#x7C7B;SimpleMessenger&#x6765;&#x7BA1;&#x7406;&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x8FDE;&#x63A5;,<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Messenger *ms_public = Messenger::create(g_ceph_context, 	g_conf-&gt;ms_type,<span class="keyword">entity_name_t</span>::OSD(whoami), 	<span class="string">&quot;client&quot;</span>,getpid());</span><br></pre></td></tr></table></figure></p>
+<p>   &#x63A5;&#x4E0B;&#x6765;&#x4F1A;&#x7ED1;&#x5B9A;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x7684;&#x76D1;&#x542C;&#x5730;&#x5740;&#xFF1A;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">r = ms_public-&gt;bind(g_conf-&gt;public_addr);</span><br><span class="line"><span class="keyword">if</span> (r &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
+<p>   &#x5728;SimpleMessenger::bind()&#x51FD;&#x6570;&#x4E2D;&#x4F1A;&#x8C03;&#x7528;accepter&#x7EBF;&#x7A0B;&#x6765;&#x7ED1;&#x5B9A;&#x5730;&#x5740;&#x548C;&#x7AEF;&#x53E3;&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> r = accepter.bind(bind_addr, avoid_ports);</span><br></pre></td></tr></table></figure></p>
+<p>   &#x5728;Accepter::bind()&#x4E2D;&#x521D;&#x59CB;&#x5316;socket&#xFF0C;&#x76D1;&#x542C;&#x7AEF;&#x53E3;&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">listen_sd = ::socket(family, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"><span class="comment">//&#x7701;&#x7565;&#x4EE3;&#x7801;....</span></span><br><span class="line">rc = ::listen(listen_sd, <span class="number">128</span>);</span><br></pre></td></tr></table></figure></p>
+<p>   &#x5728;Ceph_osd.cc&#x7684;main()&#x521B;&#x5EFA;osd&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">osd = <span class="keyword">new</span> OSD(g_ceph_context,</span><br><span class="line">            store,</span><br><span class="line">            whoami,</span><br><span class="line">            ms_cluster,</span><br><span class="line">            ms_public,</span><br><span class="line">            ms_hbclient,</span><br><span class="line">            ms_hb_front_server,</span><br><span class="line">            ms_hb_back_server,</span><br><span class="line">            ms_objecter,</span><br><span class="line">            &amp;mc,</span><br><span class="line">            g_conf-&gt;osd_data,</span><br><span class="line">            g_conf-&gt;osd_journal);</span><br></pre></td></tr></table></figure></p>
+<p>   &#x901A;&#x8FC7;osd&#x7684;&#x6784;&#x9020;&#x51FD;&#x6570;&#x53EF;&#x77E5;main()&#x4E2D;&#x521B;&#x5EFA;&#x7684;Messenger&#x5206;&#x522B;&#x521D;&#x59CB;&#x5316;&#x4E86;osd&#x4E2D;&#x5982;&#x4E0B;&#x53D8;&#x91CF;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cluster_messenger(ms_cluster),</span><br><span class="line">client_messenger(ms_public),</span><br><span class="line">objecter_messenger(ms_objecter),</span><br><span class="line">hbclient_messenger(ms_hbclient),</span><br><span class="line">hb_front_server_messenger(ms_hb_front_server),</span><br><span class="line">hb_back_server_messenger(ms_hb_back_server),</span><br></pre></td></tr></table></figure></p>
+<p>   &#x5728;main()&#x4E2D;&#x8C03;&#x7528;&#xFF1A;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err = osd-&gt;init();</span><br></pre></td></tr></table></figure></p>
+<p>   &#x5728;init()&#x4E2D;&#xFF1A;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">int</span> OSD::init()</span><br><span class="line">{</span><br><span class="line">   	<span class="comment">//...</span></span><br><span class="line">  	client_messenger-&gt;add_dispatcher_head(<span class="keyword">this</span>);</span><br><span class="line">       <span class="comment">//...</span></span><br><span class="line">    }</span><br></pre></td></tr></table></figure></p>
+<p>   &#x7EE7;&#x7EED;&#x5728;add_dispatcher_head()&#x8C03;&#x7528;ready()&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">void</span> <span class="title">add_dispatcher_head</span><span class="params">(Dispatcher *d)</span> </span>{</span><br><span class="line">  <span class="keyword">bool</span> first = dispatchers.empty();</span><br><span class="line">  dispatchers.push_front(d);</span><br><span class="line">  <span class="keyword">if</span> (d-&gt;ms_can_fast_dispatch_any())</span><br><span class="line">    fast_dispatchers.push_front(d);</span><br><span class="line">  <span class="keyword">if</span> (first)</span><br><span class="line">    ready();</span><br><span class="line">}</span><br></pre></td></tr></table></figure></p>
+<p>   &#x7EC8;&#x4E8E;&#x770B;&#x5230;&#x5728;ready()&#x4E2D;&#x8C03;&#x7528;accepter.start()&#xFF1A;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> SimpleMessenger::ready()</span><br><span class="line">{</span><br><span class="line">	 ldout(cct,<span class="number">10</span>) &lt;&lt; <span class="string">&quot;ready &quot;</span> &lt;&lt; get_myaddr() &lt;&lt; dendl;</span><br><span class="line">	 dispatch_queue.start();</span><br><span class="line"></span><br><span class="line">	 lock.Lock();</span><br><span class="line"> 	<span class="keyword">if</span> (did_bind)</span><br><span class="line">  	 accepter.start();</span><br><span class="line">	 lock.Unlock();</span><br><span class="line">}</span><br></pre></td></tr></table></figure></p>
+<p>   &#x8FD9;&#x65F6;&#x521B;&#x5EFA;&#x7EBF;&#x7A0B;&#xFF1A;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">int</span> Accepter::start()</span><br><span class="line">{</span><br><span class="line">	 create();</span><br><span class="line">	 <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></table></figure></p>
+<p>   &#x901A;&#x8FC7;&#x4E0B;&#x9762;&#x51E0;&#x6B65;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x7EBF;&#x7A0B;&#x6700;&#x7EC8;&#x6267;&#x884C;entry()&#x51FD;&#x6570;&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> Thread::create(<span class="keyword">size_t</span> stacksize)</span><br><span class="line">{</span><br><span class="line">	 <span class="keyword">int</span> ret = try_create(stacksize);</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line"> 	}</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">int</span> Thread::try_create(<span class="keyword">size_t</span> stacksize)</span><br><span class="line">{</span><br><span class="line"> 	<span class="comment">//...</span></span><br><span class="line">	 	r = pthread_create(&amp;thread_id, thread_attr, _entry_func, (<span class="keyword">void</span>*)<span class="keyword">this</span>);</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> *Thread::_entry_func(<span class="keyword">void</span> *arg)</span><br><span class="line">  {</span><br><span class="line"> 	<span class="keyword">void</span> *r = ((Thread*)arg)-&gt;entry_wrapper();</span><br><span class="line"> 	<span class="keyword">return</span> r;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> *Thread::entry_wrapper()</span><br><span class="line">{</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line"> 		<span class="keyword">return</span> entry();</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> *Accepter::entry()</span><br><span class="line">{</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">   	<span class="keyword">int</span> r = poll(&amp;pfd, <span class="number">1</span>, <span class="number">-1</span>);</span><br><span class="line">  		<span class="comment">//...</span></span><br><span class="line">   	<span class="keyword">int</span> sd = ::accept(listen_sd, (sockaddr*)&amp;addr.ss_addr(), &amp;slen);</span><br><span class="line">   	<span class="comment">//...</span></span><br><span class="line">     	msgr-&gt;add_accept_pipe(sd);</span><br><span class="line"> 		<span class="comment">//...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>   &#x7EBF;&#x7A0B;&#x4E2D;&#x6267;&#x884C;Accepter::entry(),&#x901A;&#x8FC7;poll&#x63A5;&#x53D7;&#x8FDE;&#x63A5;(ceph&#x521B;&#x5EFA;&#x8F83;&#x65E9;&#xFF0C;&#x6CA1;&#x6709;&#x4F7F;&#x7528;epoll)&#x3002;&#x5E76;&#x5728;add_accept_pipe()&#x4E2D;&#x4F7F;&#x7528;pipe&#x8BFB;&#x53D6;&#x6570;&#x636E;&#x3002;</p>
+<h5 id="&#x63A5;&#x6536;&#x5904;&#x7406;&#x6D88;&#x606F;"><a href="#&#x63A5;&#x6536;&#x5904;&#x7406;&#x6D88;&#x606F;" class="headerlink" title="&#x63A5;&#x6536;&#x5904;&#x7406;&#x6D88;&#x606F;"></a>&#x63A5;&#x6536;&#x5904;&#x7406;&#x6D88;&#x606F;</h5><p>   &#x5728;add_accept_pipe()&#x4E2D;&#x63A5;&#x7740;&#x8C03;&#x7528;start_reader()&#xFF0C;&#x521B;&#x5EFA;&#x7EBF;&#x7A0B;&#xFF0C;&#x6267;&#x884C;entry()&#x4E2D;&#x7684;&#x8BFB;&#x53D6;&#x64CD;&#x4F5C;&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Pipe *SimpleMessenger::add_accept_pipe(<span class="keyword">int</span> sd)</span><br><span class="line">{</span><br><span class="line"> <span class="comment">//...</span></span><br><span class="line">	p-&gt;start_reader();</span><br><span class="line"> 	<span class="comment">//...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure></p>
+<p>   &#x901A;&#x8FC7;Pipe::reader()&#x8C03;&#x7528;read_message()&#x63A5;&#x6536;&#x5E76;&#x89E3;&#x6790;&#x6D88;&#x606F;&#xFF0C;&#x63A5;&#x7740;&#x8C03;&#x7528;fast_dispatch()&#x5904;&#x7406;&#x6D88;&#x606F;&#xFF0C;&#x8F6C;&#x53D1;&#x5230;OSD::ms_fast_dispatch(Message *m)&#x8FDB;&#x884C;&#x5904;&#x7406;&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> Pipe::reader()</span><br><span class="line">{</span><br><span class="line">       <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">int</span> r = read_message(&amp;m, auth_handler.get());</span><br><span class="line">   	 <span class="comment">//...</span></span><br><span class="line"> in_q-&gt;fast_dispatch(m);</span><br></pre></td></tr></table></figure></p>
+<p>   &#x5728;fast_dispatch()&#x4E2D;&#x4F1A;&#x8C03;&#x7528;ms_fast_dispatch()&#x5C06;Message&#x8F6C;&#x4E3A;OpRequestRef&#xFF0C;&#x8C03;&#x7528;dispatch_session_waiting()&#x5904;&#x7406;&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> OSD::ms_fast_dispatch(Message *m)</span><br><span class="line">{</span><br><span class="line"> 	<span class="comment">//...</span></span><br><span class="line"> 	OpRequestRef op = op_tracker.create_request&lt;OpRequest&gt;(m);</span><br><span class="line">   <span class="comment">//...</span></span><br><span class="line">    session-&gt;waiting_on_map.push_back(op);</span><br><span class="line">    dispatch_session_waiting(session, nextmap);</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">   }</span><br></pre></td></tr></table></figure></p>
+<p>   &#x5728;dispatch_session_waiting&#x4E2D;&#x8C03;&#x7528;dispatch_op_fast()&#xFF0C;&#x8FDB;&#x800C;&#x8C03;&#x7528;handle_op()&#x3002;<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> OSD::dispatch_session_waiting(Session *session, OSDMapRef osdmap)</span><br><span class="line">{</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">	 <span class="keyword">for</span> (<span class="built_in">list</span>&lt;OpRequestRef&gt;::iterator i = session-&gt;waiting_on_map.begin();</span><br><span class="line">      i != session-&gt;waiting_on_map.end() &amp;&amp; dispatch_op_fast(*i, osdmap);</span><br><span class="line">      session-&gt;waiting_on_map.erase(i++));</span><br><span class="line"></span><br><span class="line"> 		<span class="comment">//...</span></span><br><span class="line">    }</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">void</span> OSD::handle_op(OpRequestRef&amp; op, OSDMapRef&amp; osdmap)</span><br><span class="line">{</span><br><span class="line">   <span class="comment">//...</span></span><br><span class="line">  	 <span class="keyword">pg_t</span> _pgid = m-&gt;get_pg();</span><br><span class="line"> 	  <span class="keyword">int64_t</span> pool = _pgid.pool();</span><br><span class="line">		 <span class="keyword">if</span> ((m-&gt;get_flags() &amp; CEPH_OSD_FLAG_PGOP) == <span class="number">0</span> &amp;&amp;</span><br><span class="line">   	  osdmap-&gt;have_pg_pool(pool))</span><br><span class="line"> 	  _pgid = osdmap-&gt;raw_pg_to_pg(_pgid);</span><br><span class="line"></span><br><span class="line">		 <span class="keyword">spg_t</span> pgid;</span><br><span class="line">		 <span class="keyword">if</span> (!osdmap-&gt;get_primary_shard(_pgid, &amp;pgid)) {</span><br><span class="line">  		 <span class="comment">// missing pool or acting set empty -- drop</span></span><br><span class="line">  			 <span class="keyword">return</span>;</span><br><span class="line"> 		}</span><br><span class="line">  	 <span class="comment">//...</span></span><br><span class="line">  	 PG *pg = get_pg_or_queue_for_pg(pgid, op);</span><br><span class="line"> 	  <span class="keyword">if</span> (pg) {</span><br><span class="line">  		 op-&gt;send_map_update = share_map.should_send;</span><br><span class="line">   		op-&gt;sent_epoch = m-&gt;get_map_epoch();</span><br><span class="line"> 		  enqueue_op(pg, op);</span><br><span class="line"> 		  share_map.should_send = <span class="literal">false</span>;</span><br><span class="line"> 		}</span><br><span class="line">   }</span><br></pre></td></tr></table></figure>
+<p>   &#x5728;handle_op&#x4E2D;&#xFF0C;&#x83B7;&#x53D6;&#x5BF9;&#x5E94;&#x7684;pg&#xFF0C;enqueue_op()&#x653E;&#x5165;ShardedWQ&#x4E2D;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ShardedThreadPool::ShardedWQ &lt; pair &lt;PGRef, OpRequestRef&gt; &gt; &amp;op_wq;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ceph/" rel="tag">#ceph</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/15/ceph-PG处理流程/" rel="next" title="ceph PG处理流程">
+                <i class="fa fa-chevron-left"></i> ceph PG处理流程
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/10/ceph-librados写流程/" rel="prev" title="ceph librados写流程">
+                ceph librados写流程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="wfazong" />
+          <p class="site-author-name" itemprop="name">wfazong</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#接收处理消息"><span class="nav-number">1.</span> <span class="nav-text">接收处理消息</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wfazong</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

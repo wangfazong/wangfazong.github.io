@@ -1,0 +1,592 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="tomcat," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Tomcat&amp;#x5206;&amp;#x6790;&amp;#x6846;&amp;#x67B6;&amp;#x65F6;&amp;#x4E3A;&amp;#x4E86;&amp;#x627E;&amp;#x5230;&amp;#x542F;&amp;#x52A8;&amp;#x7684;&amp;#x5165;&amp;#x53E3;&amp;#x53EF;&amp;#x4EE5;&amp;#x4F7F;&amp;#x7528;&amp;#xFF1A;1find . | grep &amp;apos;\.java$&amp;apos; | grep">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tomcat启动过程">
+<meta property="og:url" content="http://yoursite.com/2016/08/01/tomcat启动过程/index.html">
+<meta property="og:site_name" content="wfazong">
+<meta property="og:description" content="Tomcat&amp;#x5206;&amp;#x6790;&amp;#x6846;&amp;#x67B6;&amp;#x65F6;&amp;#x4E3A;&amp;#x4E86;&amp;#x627E;&amp;#x5230;&amp;#x542F;&amp;#x52A8;&amp;#x7684;&amp;#x5165;&amp;#x53E3;&amp;#x53EF;&amp;#x4EE5;&amp;#x4F7F;&amp;#x7528;&amp;#xFF1A;1find . | grep &amp;apos;\.java$&amp;apos; | grep">
+<meta property="og:image" content="http://yoursite.com/2016/08/01/tomcat启动过程/./_image/2016-08-01-10-21-06.jpg">
+<meta property="og:updated_time" content="2016-11-22T08:12:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tomcat启动过程">
+<meta name="twitter:description" content="Tomcat&amp;#x5206;&amp;#x6790;&amp;#x6846;&amp;#x67B6;&amp;#x65F6;&amp;#x4E3A;&amp;#x4E86;&amp;#x627E;&amp;#x5230;&amp;#x542F;&amp;#x52A8;&amp;#x7684;&amp;#x5165;&amp;#x53E3;&amp;#x53EF;&amp;#x4EE5;&amp;#x4F7F;&amp;#x7528;&amp;#xFF1A;1find . | grep &amp;apos;\.java$&amp;apos; | grep">
+<meta name="twitter:image" content="http://yoursite.com/2016/08/01/tomcat启动过程/./_image/2016-08-01-10-21-06.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/08/01/tomcat启动过程/"/>
+
+  <title> tomcat启动过程 | wfazong </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">wfazong</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                tomcat启动过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-01T14:04:21+08:00" content="2016-08-01">
+              2016-08-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h5><p>&#x5206;&#x6790;&#x6846;&#x67B6;&#x65F6;&#x4E3A;&#x4E86;&#x627E;&#x5230;&#x542F;&#x52A8;&#x7684;&#x5165;&#x53E3;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . | grep &apos;\.java$&apos; | grep -v examples | grep -v test | grep -v modules | xargs grep &apos;void main(&apos;</span><br></pre></td></tr></table></figure></p>
+<p>xargs &#x4F5C;&#x7528;&#x662F;&#x5C06;&#x524D;&#x9762;&#x7684;&#x7ED3;&#x679C;&#x8F6C;&#x6362;&#x6210;&#x5C0F;&#x5757;&#x4F20;&#x9012;&#x7ED9;grep&#x547D;&#x4EE4;&#xFF0C;&#x9632;&#x6B62;&#x53C2;&#x6570;&#x8FC7;&#x591A;&#x800C;&#x62A5;&#x9519;&#x3002;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.catalina.startup.Bootstrap</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>{</span><br><span class="line">     <span class="keyword">if</span> (daemon == <span class="keyword">null</span>) {</span><br><span class="line">         Bootstrap bootstrap = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">         <span class="keyword">try</span> {</span><br><span class="line">             bootstrap.init();</span><br><span class="line">         } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">         <span class="comment">//....</span></span><br><span class="line">         }</span><br><span class="line">         daemon = bootstrap;</span><br><span class="line">     }</span><br><span class="line">     <span class="comment">//...</span></span><br><span class="line">     <span class="keyword">if</span>(command.equals(<span class="string">&quot;start&quot;</span>)){</span><br><span class="line">         daemon.setAwait(<span class="keyword">true</span>);</span><br><span class="line">         daemon.load(args);</span><br><span class="line">         daemon.start();</span><br><span class="line">     }</span><br><span class="line">     <span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p>&#x4EE3;&#x7801;&#x4E2D;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#x4E3B;&#x8981;&#x7ECF;&#x8FC7;&#x4E09;&#x4E2A;&#x9636;&#x6BB5;&#xFF1A;</p>
+<ol>
+<li>init()&#xFF1A;&#x521D;&#x59CB;&#x5316;&#x7C7B;&#x52A0;&#x8F7D;&#x5668;commonLoader&#x3001;catalinaLoader&#x3001;sharedLoader</li>
+<li>load()&#xFF1A;&#x4F7F;&#x7528;Digester&#x89E3;&#x6790;server.xml&#x6587;&#x4EF6;&#xFF0C;&#x521D;&#x59CB;&#x5316;&#x7EC4;&#x4EF6;</li>
+<li>&#x521D;&#x59CB;&#x5316;Connector&#xFF0C;&#x4EE5;&#x6307;&#x5B9A;&#x7684;&#x534F;&#x8BAE;&#x6253;&#x5F00;&#x7AEF;&#x53E3;&#xFF0C;&#x7B49;&#x5F85;&#x8BF7;&#x6C42;&#x3002;</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.catalina.startup.Bootstrap</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        initClassLoaders();   <span class="comment">//&#x521D;&#x59CB;&#x5316;commonLoader</span></span><br><span class="line">        Thread.currentThread().setContextClassLoader(catalinaLoader);</span><br><span class="line">        SecurityClassLoad.securityClassLoad(catalinaLoader);</span><br><span class="line">        <span class="comment">// Load our startup class and call its process() method</span></span><br><span class="line">        <span class="keyword">if</span> (log.isDebugEnabled())</span><br><span class="line">            log.debug(<span class="string">&quot;Loading startup class&quot;</span>);</span><br><span class="line">        Class&lt;?&gt; startupClass =</span><br><span class="line">            catalinaLoader.loadClass</span><br><span class="line">            (<span class="string">&quot;org.apache.catalina.startup.Catalina&quot;</span>);<span class="comment">//&#x8FD9;&#x91CC;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#x540E;&#x9762;load&#x3001;start&#x901A;&#x8FC7;&#x53CD;&#x5C04;&#x8C03;&#x7528;&#x7684;&#x662F;Catalina&#x7C7B;&#x4E2D;&#x7684;&#x65B9;&#x6CD5;&#x3002;</span></span><br><span class="line">        Object startupInstance = startupClass.newInstance();</span><br><span class="line">        <span class="comment">// Set the shared extensions class loader</span></span><br><span class="line">        <span class="keyword">if</span> (log.isDebugEnabled())</span><br><span class="line">            log.debug(<span class="string">&quot;Setting startup class properties&quot;</span>);</span><br><span class="line">        String methodName = <span class="string">&quot;setParentClassLoader&quot;</span>;</span><br><span class="line">        Class&lt;?&gt; paramTypes[] = <span class="keyword">new</span> Class[<span class="number">1</span>];</span><br><span class="line">        paramTypes[<span class="number">0</span>] = Class.forName(<span class="string">&quot;java.lang.ClassLoader&quot;</span>);</span><br><span class="line">        Object paramValues[<span class="number">0</span>] = sharedLoader;</span><br><span class="line">        method method =</span><br><span class="line">            startupinstance.getclass().getmethod(methodname, paramtypes);</span><br><span class="line">        method.invoke(startupinstance, paramvalues);</span><br><span class="line">        catalinadaemon = startupinstance;</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.catalina.startup.Bootstrap</span></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initClassLoaders</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            commonLoader = createClassLoader(<span class="string">&quot;common&quot;</span>, <span class="keyword">null</span>);</span><br><span class="line">            <span class="keyword">if</span>( commonLoader == <span class="keyword">null</span> ) {</span><br><span class="line">                <span class="comment">// no config file, default to this loader - we might be in a &apos;single&apos; env.</span></span><br><span class="line">                commonLoader=<span class="keyword">this</span>.getClass().getClassLoader();</span><br><span class="line">            }</span><br><span class="line">            catalinaLoader = createClassLoader(<span class="string">&quot;server&quot;</span>, commonLoader);</span><br><span class="line">            sharedLoader = createClassLoader(<span class="string">&quot;shared&quot;</span>, commonLoader);</span><br><span class="line">        } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">            handleThrowable(t);</span><br><span class="line">            log.error(<span class="string">&quot;Class loader creation threw exception&quot;</span>, t);</span><br><span class="line">            System.exit(<span class="number">1</span>);</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>&#x7C7B;&#x52A0;&#x8F7D;&#x5668;&#x6240;&#x52A0;&#x8F7D;&#x7684;&#x8DEF;&#x5F84;&#x6216;JAR&#x662F;&#x5728;catalina.properties&#x6587;&#x4EF6;&#x4E2D;&#x5B9A;&#x4E49;&#x7684;&#xFF0C;&#x9ED8;&#x8BA4;&#x7684;&#x914D;&#x7F6E;&#x5982;&#x4E0B;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">common.loader=&quot;${catalina.base}/lib&quot;,&quot;${catalina.base}/lib/*.jar&quot;,&quot;${catalina.home}/lib&quot;,&quot;${catalina.home}/lib/*.jar&quot;</span><br><span class="line">server.loader=</span><br><span class="line">shared.loader=</span><br></pre></td></tr></table></figure></p>
+<p>server.loader&#x3001;shared.loader&#x6CA1;&#x6709;&#x914D;&#x7F6E;&#xFF0C;&#x4F7F;&#x7528;&#x7236;&#x7C7B;CommonClassLoader&#x3002;WebappClassLoader&#x52A0;&#x8F7D;&#x5177;&#x4F53;&#x7684;web&#x5E94;&#x7528;&#x3002; </p>
+<p><div align="center"><img src="/2016/08/01/tomcat&#x542F;&#x52A8;&#x8FC7;&#x7A0B;/./_image/2016-08-01-10-21-06.jpg" width="400" height="300"><br></div><br>load()&#x65B9;&#x6CD5;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(String[] arguments)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line"></span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">   	Method method =</span><br><span class="line">            catalinaDaemon.getClass().getMethod(methodName, paramTypes);</span><br><span class="line">        <span class="keyword">if</span> (log.isDebugEnabled())</span><br><span class="line">            log.debug(<span class="string">&quot;Calling startup class &quot;</span> + method);</span><br><span class="line">        method.invoke(catalinaDaemon, param);</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+<p>&#x5728;&#x6700;&#x540E;&#x901A;&#x8FC7;&#x53CD;&#x5C04;&#x8C03;&#x7528;org.apache.catalina.startup.Catalina&#x4E2D;&#x7684;load(String args[])&#x65B9;&#x6CD5;&#xFF0C;&#x8FDB;&#x800C;&#x8C03;&#x7528;Catalina.load(),&#x4F7F;&#x7528;Digeater&#x6765;&#x89E3;&#x6790;server.xml&#x4E2D;&#x7684;&#x914D;&#x7F6E;&#x7684;&#x7EC4;&#x4EF6;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.catalina.startup.Catalina&#x4E2D;&#x7684;load</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">long</span> t1 = System.nanoTime();</span><br><span class="line">        initDirs();</span><br><span class="line">        initNaming();</span><br><span class="line">        Digester digester = createStartDigester();</span><br><span class="line">		InputSource inputSource = <span class="keyword">null</span>;</span><br><span class="line">        InputStream inputStream = <span class="keyword">null</span>;</span><br><span class="line">        File file = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            file = configFile();		<span class="comment">//conf/server.xml&#x6587;&#x4EF6;</span></span><br><span class="line">            inputStream = <span class="keyword">new</span> FileInputStream(file);</span><br><span class="line">            inputSource = <span class="keyword">new</span> InputSource(file.toURI().toURL().toString());</span><br><span class="line">        <span class="comment">//&#x7701;&#x7565;&#x4EE3;&#x7801;...</span></span><br><span class="line">        getServer().setCatalina(<span class="keyword">this</span>);</span><br><span class="line">        getServer().setCatalinaHome(Bootstrap.getCatalinaHomeFile());</span><br><span class="line">        getServer().setCatalinaBase(Bootstrap.getCatalinaBaseFile());</span><br><span class="line">        initStreams();</span><br><span class="line">        <span class="comment">// Start the new server</span></span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            getServer().init();         <span class="comment">//&#x521D;&#x59CB;&#x5316;server</span></span><br><span class="line">        } <span class="keyword">catch</span> (LifecycleException e) {</span><br><span class="line">            <span class="keyword">if</span> (Boolean.getBoolean(<span class="string">&quot;org.apache.catalina.startup.EXIT_ON_INIT_FAILURE&quot;</span>)) {</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> java.lang.Error(e);</span><br><span class="line">            } <span class="keyword">else</span> {</span><br><span class="line">                log.error(<span class="string">&quot;Catalina.start&quot;</span>, e);</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">long</span> t2 = System.nanoTime();</span><br><span class="line">        <span class="keyword">if</span>(log.isInfoEnabled()) {</span><br><span class="line">            log.info(<span class="string">&quot;Initialization processed in &quot;</span> + ((t2 - t1) / <span class="number">1000000</span>) + <span class="string">&quot; ms&quot;</span>);</span><br><span class="line">        }</span><br><span class="line">        }</span><br></pre></td></tr></table></figure>
+<p>init()&#x65B9;&#x6CD5;&#x5728;LifecycleBase&#x4E2D;&#x5B9E;&#x73B0;&#xFF0C;&#x91C7;&#x7528;&#x6A21;&#x7248;&#x6A21;&#x5F0F;&#xFF0C;&#x8C03;&#x7528;&#x5404;&#x7EC4;&#x4EF6;&#x4E2D;&#x5B9E;&#x73B0;&#x7684;initInternal()&#x65B9;&#x6CD5;&#x3002;<br>&#x6211;&#x4EEC;&#x6765;&#x5173;&#x6CE8;connector&#x7684;&#x521D;&#x59CB;&#x5316;&#xFF1A;<br>connector &#x9ED8;&#x8BA4;ProtocolHandler&#x662F;org.apache.coyote.http11.Http11NioProtocol, ProtocolHandler&#x5728;connector&#x6784;&#x9020;&#x51FD;&#x6570;&#x4E2D;&#x521D;&#x59CB;&#x5316;<br>connector:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Connector</span><span class="params">(String protocol)</span> </span>{</span><br><span class="line">      setProtocol(protocol);</span><br><span class="line">      <span class="comment">// Instantiate protocol handler</span></span><br><span class="line">      	ProtocolHandler p = <span class="keyword">null</span>;</span><br><span class="line">      <span class="keyword">try</span> {</span><br><span class="line">          Class&lt;?&gt; clazz = Class.forName(protocolHandlerClassName);</span><br><span class="line">          p = (ProtocolHandler) clazz.newInstance();</span><br><span class="line">      } <span class="keyword">catch</span> (Exception e) {</span><br><span class="line">          log.error(sm.getString(</span><br><span class="line">                  <span class="string">&quot;coyoteConnector.protocolHandlerInstantiationFailed&quot;</span>), e);</span><br><span class="line">      } <span class="keyword">finally</span> {</span><br><span class="line">          <span class="keyword">this</span>.protocolHandler = p;</span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">if</span> (!Globals.STRICT_SERVLET_COMPLIANCE) {</span><br><span class="line">          URIEncoding = <span class="string">&quot;UTF-8&quot;</span>;</span><br><span class="line">          URIEncodingLower = URIEncoding.toLowerCase(Locale.ENGLISH);</span><br><span class="line">      }</span><br><span class="line">  }</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initInternal</span><span class="params">()</span> <span class="keyword">throws</span> LifecycleException </span>{</span><br><span class="line">       <span class="keyword">super</span>.initInternal();</span><br><span class="line">       <span class="comment">// Initialize adapter</span></span><br><span class="line">       adapter = <span class="keyword">new</span> CoyoteAdapter(<span class="keyword">this</span>);</span><br><span class="line">       protocolHandler.setAdapter(adapter);</span><br><span class="line">       <span class="comment">// Make sure parseBodyMethodsSet has a default</span></span><br><span class="line">       <span class="keyword">if</span>( <span class="keyword">null</span> == parseBodyMethodsSet ) {</span><br><span class="line">           setParseBodyMethods(getParseBodyMethods());</span><br><span class="line">       }</span><br><span class="line">       <span class="keyword">if</span> (protocolHandler.isAprRequired() &amp;&amp;</span><br><span class="line">               !AprLifecycleListener.isAprAvailable()) {</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> LifecycleException(</span><br><span class="line">                   sm.getString(<span class="string">&quot;coyoteConnector.protocolHandlerNoApr&quot;</span>,</span><br><span class="line">                           getProtocolHandlerClassName()));</span><br><span class="line">       }</span><br><span class="line">       <span class="keyword">try</span> {</span><br><span class="line">           protocolHandler.init();  <span class="comment">// &#x6CE8;&#x518C;&#x5904;&#x7406;&#x7EC4;&#x4EF6;</span></span><br><span class="line">       } <span class="keyword">catch</span> (Exception e) {</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> LifecycleException</span><br><span class="line">               (sm.getString</span><br><span class="line">                (<span class="string">&quot;coyoteConnector.protocolHandlerInitializationFailed&quot;</span>), e);</span><br><span class="line">       }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">       <span class="keyword">if</span> (getLog().isInfoEnabled())</span><br><span class="line">           getLog().info(sm.getString(<span class="string">&quot;abstractProtocolHandler.init&quot;</span>,getName()));</span><br><span class="line">       <span class="keyword">if</span> (oname == <span class="keyword">null</span>) {</span><br><span class="line">           <span class="comment">// Component not pre-registered so register it</span></span><br><span class="line">           oname = createObjectName();</span><br><span class="line">           <span class="keyword">if</span> (oname != <span class="keyword">null</span>) {</span><br><span class="line">               Registry.getRegistry(<span class="keyword">null</span>, <span class="keyword">null</span>).registerComponent(<span class="keyword">this</span>, oname,</span><br><span class="line">                   <span class="keyword">null</span>);</span><br><span class="line">           }</span><br><span class="line">       }</span><br><span class="line">          Registry.getRegistry(<span class="keyword">null</span>, <span class="keyword">null</span>).registerComponent(</span><br><span class="line">                   getHandler().getGlobal(), rgOname, <span class="keyword">null</span> );</span><br><span class="line">       }</span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">       String endpointName = getName();</span><br><span class="line">       endpoint.setName(endpointName.substring(<span class="number">1</span>, endpointName.length()-<span class="number">1</span>));</span><br><span class="line">       <span class="keyword">try</span> {</span><br><span class="line">           endpoint.init();</span><br><span class="line">       } <span class="keyword">catch</span> (Exception ex) {</span><br><span class="line">           getLog().error(sm.getString(<span class="string">&quot;abstractProtocolHandler.initError&quot;</span>,</span><br><span class="line">                   getName()), ex);</span><br><span class="line">           <span class="keyword">throw</span> ex;</span><br><span class="line">       }</span><br><span class="line">   }</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.tomcat.util.net.AbstractEndpoint</span></span><br><span class="line"> 	<span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        testServerCipherSuitesOrderSupport();</span><br><span class="line">        <span class="keyword">if</span> (bindOnInit) {</span><br><span class="line">            bind();</span><br><span class="line">            bindState = BindState.BOUND_ON_INIT;</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line"><span class="comment">//org.apache.tomcat.util.net.NioEndpoint</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        System.out.println(<span class="string">&quot;in binding&quot;</span>);</span><br><span class="line">        serverSock = ServerSocketChannel.open();</span><br><span class="line">        socketProperties.setProperties(serverSock.socket());</span><br><span class="line">        InetSocketAddress addr = (getAddress()!=<span class="keyword">null</span>?<span class="keyword">new</span> InetSocketAddress(getAddress(),getPort()):<span class="keyword">new</span> InetSocketAddress(getPort()));</span><br><span class="line">        serverSock.socket().bind(addr,getBacklog());</span><br><span class="line">        serverSock.configureBlocking(<span class="keyword">true</span>); <span class="comment">//mimic APR behavior</span></span><br><span class="line">        serverSock.socket().setSoTimeout(getSocketProperties().getSoTimeout());</span><br><span class="line">	    <span class="comment">//....</span></span><br><span class="line">		selectorPool.open();</span><br><span class="line">	}</span><br></pre></td></tr></table></figure>
+<p>start()&#x540C;&#x4E0A;&#xFF0C;&#x6700;&#x540E;&#x8C03;&#x7528;startInternal()<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AbstractEndpoint.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> maxThreads = <span class="number">200</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMaxThreads</span><span class="params">(<span class="keyword">int</span> maxThreads)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.maxThreads = maxThreads;</span><br><span class="line">        Executor executor = <span class="keyword">this</span>.executor;</span><br><span class="line">        <span class="keyword">if</span> (running &amp;&amp; executor != <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">if</span> (executor <span class="keyword">instanceof</span> java.util.concurrent.ThreadPoolExecutor) {</span><br><span class="line">                ((java.util.concurrent.ThreadPoolExecutor) executor).setMaximumPoolSize(maxThreads);</span><br><span class="line">            } <span class="keyword">else</span> <span class="keyword">if</span> (executor <span class="keyword">instanceof</span> ResizableExecutor) {</span><br><span class="line">                ((ResizableExecutor) executor).resizePool(minSpareThreads, maxThreads);</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startInternal</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">    <span class="keyword">if</span> (!running) {</span><br><span class="line">        running = <span class="keyword">true</span>;</span><br><span class="line">        paused = <span class="keyword">false</span>;</span><br><span class="line">        processorCache = <span class="keyword">new</span> SynchronizedStack&lt;&gt;(SynchronizedStack.DEFAULT_SIZE,</span><br><span class="line">                socketProperties.getProcessorCache());</span><br><span class="line">        eventCache = <span class="keyword">new</span> SynchronizedStack&lt;&gt;(SynchronizedStack.DEFAULT_SIZE,</span><br><span class="line">                        socketProperties.getEventCache());</span><br><span class="line">        nioChannels = <span class="keyword">new</span> SynchronizedStack&lt;&gt;(SynchronizedStack.DEFAULT_SIZE,</span><br><span class="line">                socketProperties.getBufferPool());</span><br><span class="line">        <span class="comment">// Create worker collection</span></span><br><span class="line">        <span class="keyword">if</span> ( getExecutor() == <span class="keyword">null</span> ) {</span><br><span class="line">            createExecutor();</span><br><span class="line">        }</span><br><span class="line">        initializeConnectionLatch();</span><br><span class="line">        <span class="comment">// Start poller threads</span></span><br><span class="line">        pollers = <span class="keyword">new</span> Poller[getPollerThreadCount()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;pollers.length; i++) {</span><br><span class="line">            pollers[i] = <span class="keyword">new</span> Poller();</span><br><span class="line">            Thread pollerThread = <span class="keyword">new</span> Thread(pollers[i], getName() + <span class="string">&quot;-ClientPoller-&quot;</span>+i);</span><br><span class="line">            pollerThread.setPriority(threadPriority);</span><br><span class="line">            pollerThread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">            pollerThread.start();</span><br><span class="line">        }</span><br><span class="line">        startAcceptorThreads();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>&#x8C03;&#x7528;<code>createExecutor()</code>&#x521B;&#x5EFA;&#x7EBF;&#x7A0B;&#xFF0C;&#x9ED8;&#x8BA4;200.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AbstractEndpoint.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> maxThreads = <span class="number">200</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMaxThreads</span><span class="params">(<span class="keyword">int</span> maxThreads)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.maxThreads = maxThreads;</span><br><span class="line">        Executor executor = <span class="keyword">this</span>.executor;</span><br><span class="line">        <span class="keyword">if</span> (running &amp;&amp; executor != <span class="keyword">null</span>) {</span><br><span class="line">            <span class="keyword">if</span> (executor <span class="keyword">instanceof</span> java.util.concurrent.ThreadPoolExecutor) {</span><br><span class="line">                ((java.util.concurrent.ThreadPoolExecutor) executor).setMaximumPoolSize(maxThreads);</span><br><span class="line">            } <span class="keyword">else</span> <span class="keyword">if</span> (executor <span class="keyword">instanceof</span> ResizableExecutor) {</span><br><span class="line">                ((ResizableExecutor) executor).resizePool(minSpareThreads, maxThreads);</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">startAcceptorThreads</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">int</span> count = getAcceptorThreadCount();</span><br><span class="line">    acceptors = <span class="keyword">new</span> Acceptor[count];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) {</span><br><span class="line">        acceptors[i] = createAcceptor();</span><br><span class="line">        String threadName = getName() + <span class="string">&quot;-Acceptor-&quot;</span> + i;</span><br><span class="line">        acceptors[i].setThreadName(threadName);</span><br><span class="line">        Thread t = <span class="keyword">new</span> Thread(acceptors[i], threadName);</span><br><span class="line">        t.setPriority(getAcceptorThreadPriority());</span><br><span class="line">        t.setDaemon(getDaemon());</span><br><span class="line">        t.start();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="class"><span class="keyword">class</span> <span class="title">Acceptor</span> <span class="keyword">extends</span> <span class="title">AbstractEndpoint</span>.<span class="title">Acceptor</span> </span>{</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{</span><br><span class="line">            <span class="keyword">int</span> errorDelay = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// Loop until we receive a shutdown command</span></span><br><span class="line">            <span class="keyword">while</span> (running) {</span><br><span class="line">                <span class="comment">// Loop if endpoint is paused</span></span><br><span class="line">                <span class="keyword">while</span> (paused &amp;&amp; running) {</span><br><span class="line">                    state = AcceptorState.PAUSED;</span><br><span class="line">                    <span class="keyword">try</span> {</span><br><span class="line">                        Thread.sleep(<span class="number">50</span>);</span><br><span class="line">                    } <span class="keyword">catch</span> (InterruptedException e) {</span><br><span class="line">                        <span class="comment">// Ignore</span></span><br><span class="line">                    }</span><br><span class="line">                }</span><br><span class="line">                <span class="keyword">if</span> (!running) {</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                }</span><br><span class="line">                state = AcceptorState.RUNNING;</span><br><span class="line">                <span class="keyword">try</span> {</span><br><span class="line">                    <span class="comment">//if we have reached max connections, wait</span></span><br><span class="line">                    countUpOrAwaitConnection();</span><br><span class="line">                    Socket socket = <span class="keyword">null</span>;</span><br><span class="line">                    <span class="keyword">try</span> {</span><br><span class="line">                        <span class="comment">// Accept the next incoming connection from the server</span></span><br><span class="line">                        <span class="comment">// socket</span></span><br><span class="line">                        socket = serverSocketFactory.acceptSocket(serverSocket);</span><br><span class="line">                    } <span class="keyword">catch</span> (IOException ioe) {</span><br><span class="line">                        countDownConnection();</span><br><span class="line">                        <span class="comment">// Introduce delay if necessary</span></span><br><span class="line">                        errorDelay = handleExceptionWithDelay(errorDelay);</span><br><span class="line">                        <span class="comment">// re-throw</span></span><br><span class="line">                        <span class="keyword">throw</span> ioe;</span><br><span class="line">                    }</span><br><span class="line">                    <span class="comment">// Successful accept, reset the error delay</span></span><br><span class="line">                    errorDelay = <span class="number">0</span>;</span><br><span class="line">                    <span class="comment">// Configure the socket</span></span><br><span class="line">                    <span class="keyword">if</span> (running &amp;&amp; !paused &amp;&amp; setSocketOptions(socket)) {</span><br><span class="line">                        <span class="comment">// Hand this socket off to an appropriate processor</span></span><br><span class="line">                        <span class="keyword">if</span> (!processSocket(socket)) {</span><br><span class="line">                            countDownConnection();</span><br><span class="line">                            <span class="comment">// Close socket right away</span></span><br><span class="line">                            closeSocket(socket);</span><br><span class="line">                        }</span><br><span class="line">                    } <span class="keyword">else</span> {</span><br><span class="line">                        countDownConnection();</span><br><span class="line">                        <span class="comment">// Close socket right away</span></span><br><span class="line">                        closeSocket(socket);</span><br><span class="line">                    }</span><br><span class="line">                } <span class="keyword">catch</span> (IOException x) {</span><br><span class="line">                    <span class="keyword">if</span> (running) {</span><br><span class="line">                        log.error(sm.getString(<span class="string">&quot;endpoint.accept.fail&quot;</span>), x);</span><br><span class="line">                    }</span><br><span class="line">                } <span class="keyword">catch</span> (NullPointerException npe) {</span><br><span class="line">                    <span class="keyword">if</span> (running) {</span><br><span class="line">                        log.error(sm.getString(<span class="string">&quot;endpoint.accept.fail&quot;</span>), npe);</span><br><span class="line">                    }</span><br><span class="line">                } <span class="keyword">catch</span> (Throwable t) {</span><br><span class="line">                    ExceptionUtils.handleThrowable(t);</span><br><span class="line">                    log.error(sm.getString(<span class="string">&quot;endpoint.accept.fail&quot;</span>), t);</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">            state = AcceptorState.ENDED;</span><br><span class="line">        }</span><br><span class="line">    }</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tomcat/" rel="tag">#tomcat</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/01/tomcat解析web-xml/" rel="next" title="tomcat解析web.xml">
+                <i class="fa fa-chevron-left"></i> tomcat解析web.xml
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/01/mybatis源码分析/" rel="prev" title="mybatis源码分析">
+                mybatis源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="wfazong" />
+          <p class="site-author-name" itemprop="name">wfazong</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#Tomcat"><span class="nav-number">1.</span> <span class="nav-text">Tomcat</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wfazong</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Deep Learning &amp;#x5F88;&amp;#x70ED;&amp;#xFF0C;&amp;#x5148;&amp;#x6765;&amp;#x8FD0;&amp;#x884C;neural-style&amp;#x611F;&amp;#x53D7;&amp;#x4E0B;&amp;#xFF0C;&amp;#x4E3A;&amp;#x4E86;&amp;#x65B9;&amp;#x4FBF;&amp;#x53EF;&amp;#x4EE5;&amp;#x5230;Deep Dream&amp;#xFF0C;15&amp;#x5206;&amp;#">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Mac安装mxnet(cpu)">
+<meta property="og:url" content="http://yoursite.com/back/Mac安装mxnet(cpu).html">
+<meta property="og:site_name" content="wfazong">
+<meta property="og:description" content="Deep Learning &amp;#x5F88;&amp;#x70ED;&amp;#xFF0C;&amp;#x5148;&amp;#x6765;&amp;#x8FD0;&amp;#x884C;neural-style&amp;#x611F;&amp;#x53D7;&amp;#x4E0B;&amp;#xFF0C;&amp;#x4E3A;&amp;#x4E86;&amp;#x65B9;&amp;#x4FBF;&amp;#x53EF;&amp;#x4EE5;&amp;#x5230;Deep Dream&amp;#xFF0C;15&amp;#x5206;&amp;#">
+<meta property="og:image" content="http://yoursite.com/back/./_image/2016-07-13 14-46-07.jpg">
+<meta property="og:image" content="http://yoursite.com/back/./_image/2016-07-13 14-46-36.jpg">
+<meta property="og:updated_time" content="2016-07-18T07:53:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mac安装mxnet(cpu)">
+<meta name="twitter:description" content="Deep Learning &amp;#x5F88;&amp;#x70ED;&amp;#xFF0C;&amp;#x5148;&amp;#x6765;&amp;#x8FD0;&amp;#x884C;neural-style&amp;#x611F;&amp;#x53D7;&amp;#x4E0B;&amp;#xFF0C;&amp;#x4E3A;&amp;#x4E86;&amp;#x65B9;&amp;#x4FBF;&amp;#x53EF;&amp;#x4EE5;&amp;#x5230;Deep Dream&amp;#xFF0C;15&amp;#x5206;&amp;#">
+<meta name="twitter:image" content="http://yoursite.com/back/./_image/2016-07-13 14-46-07.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/back/Mac安装mxnet(cpu).html"/>
+
+  <title>
+  
+
+  
+    Mac安装mxnet(cpu) | wfazong
+  
+</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">wfazong</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    
+      <p>Deep Learning &#x5F88;&#x70ED;&#xFF0C;&#x5148;&#x6765;&#x8FD0;&#x884C;neural-style&#x611F;&#x53D7;&#x4E0B;&#xFF0C;&#x4E3A;&#x4E86;&#x65B9;&#x4FBF;&#x53EF;&#x4EE5;&#x5230;<a href="http://deepdreamgenerator.com/generator" target="_blank" rel="external">Deep Dream</a>&#xFF0C;15&#x5206;&#x949F;&#x5185;&#x5B8C;&#x4E8B;&#x3002;</p>
+<p><img src="/back/./_image/2016-07-13 14-46-07.jpg" alt=""></p>
+<p><img src="/back/./_image/2016-07-13 14-46-36.jpg" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">brew update</span><br><span class="line">brew tap homebrew/science</span><br><span class="line">brew info opencv</span><br><span class="line">brew install opencv</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone --recursive https://github.com/dmlc/mxnet</span><br><span class="line">cd mxnet</span><br><span class="line">cp make/osx.mk ./config.mk</span><br><span class="line">make -j4</span><br></pre></td></tr></table></figure>
+<p>make  &#x5931;&#x8D25;:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mxnet/mshadow/mshadow/./base.h:135:14: fatal error:</span><br><span class="line">      &apos;cblas.h&apos; file not found</span><br><span class="line">      .......</span><br><span class="line">1 error generated.</span><br><span class="line">1 error generated.</span><br><span class="line">1 error generated.</span><br><span class="line">make: *** [build/src/resource.o] Error 1</span><br><span class="line">make: *** Waiting for unfinished jobs....</span><br><span class="line">make: *** [build/src/c_api/c_api.o] Error 1</span><br><span class="line">make: *** [build/src/c_api/c_predict_api.o] Error 1</span><br></pre></td></tr></table></figure>
+<p>&#x5B89;&#x88C5;openblas&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install homebrew/science/openblas</span><br></pre></td></tr></table></figure>
+<p>&#x4FEE;&#x6539; config.mk </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">USE_BLAS = apple  //&#x4E0D;&#x662F;openblas</span><br><span class="line">ADD_LDFLAGS = -I/usr/local/opt/openblas/lib</span><br><span class="line">ADD_CFLAGS =  -I/usr/local/opt/openblas/include</span><br></pre></td></tr></table></figure>
+<p>&#x8BAD;&#x7EC3; mnist&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd example/image-classification</span><br><span class="line">python train_mnist.py</span><br></pre></td></tr></table></figure>
+<p>&#x8DD1;&#x4E00;&#x4E0B;neural-style&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd  mxnet/example/neural-style/</span><br><span class="line">sh download.sh </span><br><span class="line">python run.py --content-image input/pogo.jpg --style-image input/vangogh.jpg</span><br></pre></td></tr></table></figure>
+<p>ops&#xFF01;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">raise MXNetError(py_str(_LIB.MXGetLastError()))</span><br><span class="line">mxnet.base.MXNetError: [19:08:38] src/storage/storage.cc:44: Please compile with CUDA enabled</span><br></pre></td></tr></table></figure>
+<p>&#x5E2E;&#x52A9;&#x6587;&#x6863;&#x4E2D;&#xFF1A;</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--gpu GPU             which gpu card to use, -1 means using cpu</span><br></pre></td></tr></table></figure>
+<p>&#x8FD0;&#x884C;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python run.py --gpu -1 --content-image input/pogo.jpg --style-image input/vangogh.jpg</span><br></pre></td></tr></table></figure>
+<p>&#x63A5;&#x4E0B;&#x6765;&#x5C31;&#x53EF;&#x4EE5;&#x4F53;&#x9A8C;&#x53EA;&#x7528;cpu&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x51E0;&#x4E2A;&#x5C0F;&#x65F6;&#x8BAD;&#x7EC3;&#x4E00;&#x5F20;&#x56FE;&#x7247;&#x7684;&#x9178;&#x723D;&#x3002;</p>
+<p>A quick solution is to use homebrew to install python into /usr/local/bin so that your pip can run against a user-modifiable python framework.</p>
+<p>brew install python<br>pip &#x2013;version<br>pip install &#x2013;user</p>
+
+    
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="wfazong" />
+          <p class="site-author-name" itemprop="name">wfazong</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wfazong</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
