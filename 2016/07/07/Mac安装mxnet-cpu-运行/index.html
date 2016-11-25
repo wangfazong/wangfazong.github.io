@@ -92,7 +92,7 @@
 <meta property="og:description" content="Deep Learning &amp;#x5F88;&amp;#x70ED;&amp;#xFF0C;&amp;#x5148;&amp;#x6765;&amp;#x8FD0;&amp;#x884C;neural-style&amp;#x611F;&amp;#x53D7;&amp;#x4E0B;&amp;#xFF0C;&amp;#x4E3A;&amp;#x4E86;&amp;#x65B9;&amp;#x4FBF;&amp;#x53EF;&amp;#x4EE5;&amp;#x5230;Deep Dream&amp;#xFF0C;15&amp;#x5206;&amp;#">
 <meta property="og:image" content="http://yoursite.com/2016/07/07/Mac安装mxnet-cpu-运行/source.jpg">
 <meta property="og:image" content="http://yoursite.com/2016/07/07/Mac安装mxnet-cpu-运行/res.jpg">
-<meta property="og:updated_time" content="2016-11-22T08:11:24.000Z">
+<meta property="og:updated_time" content="2016-11-25T02:27:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mac安装mxnet(cpu)">
 <meta name="twitter:description" content="Deep Learning &amp;#x5F88;&amp;#x70ED;&amp;#xFF0C;&amp;#x5148;&amp;#x6765;&amp;#x8FD0;&amp;#x884C;neural-style&amp;#x611F;&amp;#x53D7;&amp;#x4E0B;&amp;#xFF0C;&amp;#x4E3A;&amp;#x4E86;&amp;#x65B9;&amp;#x4FBF;&amp;#x53EF;&amp;#x4EE5;&amp;#x5230;Deep Dream&amp;#xFF0C;15&amp;#x5206;&amp;#">
@@ -301,8 +301,11 @@
 <p>&#x8FD0;&#x884C;&#xFF1A;</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python run.py --gpu -1 --content-image input/pogo.jpg --style-image input/vangogh.jpg</span><br></pre></td></tr></table></figure>
 <p>&#x63A5;&#x4E0B;&#x6765;&#x5C31;&#x53EF;&#x4EE5;&#x4F53;&#x9A8C;&#x53EA;&#x7528;cpu&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x51E0;&#x4E2A;&#x5C0F;&#x65F6;&#x8BAD;&#x7EC3;&#x4E00;&#x5F20;&#x56FE;&#x7247;&#x7684;&#x9178;&#x723D;&#x3002;</p>
-<p>A quick solution is to use homebrew to install python into /usr/local/bin so that your pip can run against a user-modifiable python framework.</p>
-<p>brew install python<br>pip &#x2013;version<br>pip install &#x2013;user</p>
+<ul>
+<li>&#x4F7F;&#x7528;pip&#x65F6;&#x53EF;&#x80FD;&#x9047;&#x5230;&#xFF1A;<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">creating /System/Library/Frameworks/Python.framework/Versions/2.7/share</span><br><span class="line">    error: could not create &apos;/System/Library/Frameworks/Python.framework/Versions/2.7/share&apos;: Operation not permitted</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&#x89E3;&#x51B3;&#x65B9;&#x6CD5;&#xFF1A;<a href="http://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade" target="_blank" rel="external">How to use pip after the OS X El Capitan upgrade?</a><br>&#x6216;&#x8005;&#x4F7F;&#x7528;<code>virtualenv</code></p>
 
       
     </div>
