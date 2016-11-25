@@ -238,6 +238,114 @@
             
               
                 
+                <a class="post-title-link" href="/2016/01/01/tgt绑定ceph-rbd作为后端存储/" itemprop="url">
+                  tgt绑定ceph rbd作为后端存储
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-01-01T14:50:40+08:00" content="2016-01-01">
+              2016-01-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>&#x5B89;&#x88C5;iscsi-target</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install scsi-target-utils</span><br></pre></td></tr></table></figure>
+<p>&#x67E5;&#x770B;iscsi-target&#x662F;&#x5426;&#x652F;&#x6301;rbd&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgtadm --lld iscsi --mode system --op show | grep rbd</span><br></pre></td></tr></table></figure>
+<p>&#x521B;&#x5EFA;rbd&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rbd create iscsi-image --size 4096</span><br></pre></td></tr></table></figure>
+<p>&#x521B;&#x5EFA;&#x4E00;&#x4E2A;iscsi target&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgtadm --lld iscsi --mode target --op new --tid 1 --targetname iqn.2015-12.com.example:cephtgt.target0</span><br></pre></td></tr></table></figure>
+<p>&#x67E5;&#x770B;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgtadm --lld iscsi --mode target --op show &#x2013;-tid  1</span><br></pre></td></tr></table></figure>
+<p>&#x57FA;&#x4E8E;&#x7B2C;&#x4E8C;&#x6B65;&#x521B;&#x5EFA;&#x7684;rbd image&#x521B;&#x5EFA;&#x4E00;&#x4E2A;lun&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgtadm --lld iscsi --mode logicalunit --op new --tid 1 --lun 1 --backing-store iscsi-image --bstype rbd</span><br></pre></td></tr></table></figure>
+<p>&#x8BBE;&#x7F6E;lun&#x7684;&#x8BBF;&#x95EE;&#x63A7;&#x5236;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgtadm --lld iscsi --op bind --mode target --tid 1 -I ALL</span><br></pre></td></tr></table></figure>
+<p>&#x67E5;&#x770B;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgtadm --lld iscsi --mode target --op show</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2015/10/01/编译freemind支持latex公式/" itemprop="url">
                   编译freemind支持latex公式
                 </a>
@@ -373,7 +481,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-count">22</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
